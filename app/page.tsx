@@ -10,6 +10,7 @@ const Page = async () => {
   if (!isLoggedIn) {
     redirect("/api/auth/login");
   }
+
   return <div>Page</div>;
 };
 

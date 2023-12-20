@@ -1,0 +1,17 @@
+.nav_ctn {
+    background-color: none;
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1em;
+    color: black;
+    
+    &_link {
+        text-decoration: none;
+        color: black
+        
+    }
+}
