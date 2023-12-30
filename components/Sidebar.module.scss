@@ -1,0 +1,51 @@
+.sidebar_ctn {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    width: 0%;
+    transform: translateX(-100%);
+    transition: 250ms ease-in-out all;
+    
+    &.open {
+        transition: 250ms ease-in-out all;
+        width: 100%;
+        transform: translateX(-100%);
+    }
+}
+
+.sidebar_pull-tab {
+    position: absolute;
+    display: block;
+    height: 100%;
+    width: 15px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.sidebar_category {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    list-style: none;
+}
+
+@media (max-width: 450px) {
+    .sidebar_ctn {
+        display: none;
+    };
+    
+    .sidebar  {
+        display: none;
+        
+        &.open {
+            display: flex;
+        }
+    }
+    
+    .sidebar_pull-tab {
+        display: none;
+    }
+}

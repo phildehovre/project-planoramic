@@ -8,7 +8,7 @@ import React from "react";
 import Styles from "./Header.module.scss";
 import Image from "next/image";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { createUser, deleteUser } from "@app/hooks/db";
+import { createUser } from "@app/hooks/db";
 
 const Header = async () => {
   const { isAuthenticated, getUser } = getKindeServerSession();
@@ -19,6 +19,21 @@ const Header = async () => {
   if (isLoggedIn) {
     const { data } = await createUser(userData);
   }
+
+  const dropDownOptions = [
+    {
+      label: "Dashboard",
+      link: "/dashboard",
+      requiresAuth: true,
+    },
+    {
+      label: "Logout",
+      link: "/logout",
+      requiresAuth: true,
+    },
+  ];
+
+  const renderDropdown = () => {};
 
   return (
     <header className={Styles.nav_ctn}>
@@ -44,6 +59,12 @@ const Header = async () => {
             <Link className={Styles.nav_link} href="/dashboard">
               Dashboard
             </Link>
+            <Image
+              src={userData?.picture || ""}
+              alt="User profile picture"
+              width={30}
+              height={30}
+            />
             <LogoutLink className="button">Log out</LogoutLink>
           </>
         ) : (
