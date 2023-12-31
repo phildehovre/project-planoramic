@@ -5,8 +5,9 @@ import Image from "next/image";
 import React, { useState } from "react";
 import styles from "./Sidebar.module.scss";
 import { Infer } from "next/dist/compiled/superstruct";
-import { useRouter } from "next/router";
 import Link from "next/link";
+import Modal from "./Modal";
+import { create } from "@app/actions/templateActions";
 
 const Sidebar = ({
   data,
@@ -18,8 +19,10 @@ const Sidebar = ({
 }) => {
   const [isShowing, setIsShowing] = useState(true);
   const [isExtended, setIsExtended] = useState("");
+  const [displayModal, setDisplayModal] = useState("");
   const { user } = useKindeBrowserClient();
 
+  console.log(displayModal);
   const handleHeadingClick = (heading: string) => {
     setIsExtended((prev) => (prev === heading ? "" : heading));
   };
@@ -48,16 +51,17 @@ const Sidebar = ({
         );
       }
       return (
-        <ul
-          className={styles.sidebar_category}
-          key={item.heading}
-          onClick={() => handleHeadingClick(item.heading)}
-        >
-          <h1>
-            {item.heading.charAt(0).toUpperCase() + item.heading.slice(1)}
-          </h1>
+        <ul className={styles.sidebar_category} key={item.heading}>
+          <span>
+            <h1 onClick={() => handleHeadingClick(item.heading)}>
+              {item.heading.charAt(0).toUpperCase() + item.heading.slice(1)}
+            </h1>
+            <button onClick={() => setDisplayModal(item.heading)}>
+              New {item.heading}
+            </button>
+          </span>
           {isExtended === item.heading &&
-            item.items.map((subItem: RessourceType) => {
+            item.items.map((subItem: ResourceType) => {
               return (
                 <Link
                   href={`/dashboard/${item.heading}/${subItem.id}`}
@@ -95,6 +99,13 @@ const Sidebar = ({
       >
         {isShowing ? "<<" : ">>"}
       </div>
+      <Modal
+        onSave={() => setDisplayModal("")}
+        onCancel={() => setDisplayModal("")}
+        display={displayModal === "campaigns" || displayModal === "templates"}
+      >
+        Add {displayModal}
+      </Modal>
     </>
   );
 };

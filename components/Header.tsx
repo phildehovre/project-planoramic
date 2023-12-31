@@ -8,7 +8,7 @@ import React from "react";
 import Styles from "./Header.module.scss";
 import Image from "next/image";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { createUser } from "@app/hooks/db";
+import { createUser } from "@hooks/db";
 
 const Header = async () => {
   const { isAuthenticated, getUser } = getKindeServerSession();
