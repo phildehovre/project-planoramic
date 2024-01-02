@@ -30,6 +30,7 @@ export async function createUser(userData: any): Promise<CreateUserResult> {
         family_name: userData.family_name,
         given_name: userData.given_name,
         email: userData.email,
+        kinde_id: userData.id,
       },
     });
 
@@ -64,7 +65,7 @@ export async function createTemplate(
       data: {
         name,
         description,
-        userId,
+        kinde_id: userId,
       },
     });
     data = template;

@@ -17,7 +17,7 @@ const Header = async () => {
   const userData = await getUser();
 
   if (isLoggedIn) {
-    const { data } = await createUser(userData);
+    const { data, error } = await createUser(userData);
   }
 
   const dropDownOptions = [
@@ -32,8 +32,6 @@ const Header = async () => {
       requiresAuth: true,
     },
   ];
-
-  const renderDropdown = () => {};
 
   return (
     <header className={Styles.nav_ctn}>

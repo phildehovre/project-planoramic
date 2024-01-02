@@ -2,8 +2,8 @@ interface ResourceType {
   id: string;
   name: string;
   description: string;
-  created_by: string;
-  userId: string;
+  userId: string | null;
+  kinde_id: string;
 }
 
 interface CampaignType extends ResourceType {
@@ -25,3 +25,15 @@ interface User {
   Campaigns?: CampaignType[];
   Events?: Event[];
 }
+
+interface SidebarTypes {
+  heading: "Templates" | "Campaigns" | "Settings";
+  type: "template" | "campaign" | "settings";
+  items: ResourceType[] | SidebarSettingsMenuItems[] | undefined;
+}
+
+type SidebarSettingsMenuItems = {
+  name: "Settings" | "Profile" | "Logout";
+  description: string;
+  id?: string;
+};

@@ -8,72 +8,27 @@ import { Infer } from "next/dist/compiled/superstruct";
 import Link from "next/link";
 import Modal from "./Modal";
 import { create } from "@app/actions/templateActions";
+import SidebarSection from "./SidebarSection";
 
-const Sidebar = ({
-  data,
-}: {
-  data: {
-    heading: string;
-    items: Infer<typeof data>;
-  }[];
-}) => {
+const Sidebar = ({ data }: { data: SidebarTypes[] }) => {
   const [isShowing, setIsShowing] = useState(true);
   const [isExtended, setIsExtended] = useState("");
   const [displayModal, setDisplayModal] = useState("");
   const { user } = useKindeBrowserClient();
 
-  console.log(displayModal);
   const handleHeadingClick = (heading: string) => {
     setIsExtended((prev) => (prev === heading ? "" : heading));
   };
 
-  const renderSidebarContent = () => {
-    return data.map((item) => {
-      if (item.heading === "Settings") {
-        return (
-          <ul
-            className={styles.sidebar_category}
-            key={item.heading}
-            onClick={() => handleHeadingClick(item.heading)}
-          >
-            <h1>
-              {item.heading.charAt(0).toUpperCase() + item.heading.slice(1)}
-            </h1>
-            {isExtended === item.heading &&
-              item.items.map((subItem: string) => {
-                return (
-                  <Link href={subItem} key={subItem}>
-                    {subItem}
-                  </Link>
-                );
-              })}
-          </ul>
-        );
+  const handleAddTemplate = async () => {
+    if (user) {
+      try {
+        await create(user.id);
+        setDisplayModal("");
+      } catch (err) {
+        console.log(err);
       }
-      return (
-        <ul className={styles.sidebar_category} key={item.heading}>
-          <span>
-            <h1 onClick={() => handleHeadingClick(item.heading)}>
-              {item.heading.charAt(0).toUpperCase() + item.heading.slice(1)}
-            </h1>
-            <button onClick={() => setDisplayModal(item.heading)}>
-              New {item.heading}
-            </button>
-          </span>
-          {isExtended === item.heading &&
-            item.items.map((subItem: ResourceType) => {
-              return (
-                <Link
-                  href={`/dashboard/${item.heading}/${subItem.id}`}
-                  key={subItem.id}
-                >
-                  {subItem.name}
-                </Link>
-              );
-            })}
-        </ul>
-      );
-    });
+    }
   };
 
   return (
@@ -82,7 +37,16 @@ const Sidebar = ({
         role="complementary"
         className={styles.sidebar_ctn + `${isShowing ? "open" : ""}`}
       >
-        <div>{renderSidebarContent()}</div>
+        {data.map((category, index) => {
+          return (
+            <SidebarSection
+              heading={category.heading}
+              items={category.items}
+              type={category.type}
+              key={category.heading + index}
+            />
+          );
+        })}
         <div className="user-detail">
           <Image
             src={user?.picture || ""}
@@ -100,7 +64,7 @@ const Sidebar = ({
         {isShowing ? "<<" : ">>"}
       </div>
       <Modal
-        onSave={() => setDisplayModal("")}
+        onSave={handleAddTemplate}
         onCancel={() => setDisplayModal("")}
         display={displayModal === "campaigns" || displayModal === "templates"}
       >

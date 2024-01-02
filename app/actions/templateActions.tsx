@@ -2,18 +2,18 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@utils/prisma";
 
-export async function create(formData: FormData, userId: string) {
-  const input = formData.get("input") as string;
+export async function create(userId: string) {
+  // const input = formData.get("input") as string;
 
-  if (!input.trim()) {
-    return;
-  }
+  // if (!input.trim()) {
+  //   return;
+  // }
 
   await prisma.template.create({
     data: {
       name: "Untitled",
       description: "",
-      userId,
+      kinde_id: userId,
     },
   });
 
@@ -32,6 +32,22 @@ export async function edit(formData: FormData) {
       //   title: input,
     },
   });
+
+  revalidatePath("/");
+}
+export async function update(formData: FormData, id: string) {
+  for (let key in formData) {
+    const input = formData.get(key) as string;
+
+    await prisma.template.update({
+      where: {
+        id: id,
+      },
+      data: {
+        [key]: input,
+      },
+    });
+  }
 
   revalidatePath("/");
 }

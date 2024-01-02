@@ -22,6 +22,7 @@ model Post {
 
 model User {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  kinde_id    String     @unique
   email       String     @unique
   family_name String?
   given_name  String?
@@ -50,6 +51,7 @@ type Address {
 
 model Template {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  kinde_id    String
   name        String
   description String
   userId      String?    @db.ObjectId
@@ -60,6 +62,7 @@ model Template {
 
 model Campaign {
   id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  kinde_id       String
   name           String
   description    String
   userId         String    @db.ObjectId
@@ -72,6 +75,7 @@ model Campaign {
 model Event {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   name        String
+  kinde_id    String
   description String
   userId      String    @db.ObjectId
   type        String
