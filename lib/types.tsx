@@ -15,6 +15,11 @@ interface TemplateType extends ResourceType {
   Campaign: CampaignType[];
 }
 
+interface EventType extends ResourceType {
+  templateId: string;
+  campaignId?: string;
+}
+
 interface User {
   id: string;
   email: string;

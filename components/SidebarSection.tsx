@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./Sidebar.module.scss";
 import Link from "next/link";
+// import { create } from "@app/actions/templateActions";
 
 interface SidebarSectionProps {
   heading: string;
@@ -15,11 +16,10 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 }) => {
   if (!items) return;
 
-  console.log(items);
-
   return (
     <div>
       <h1>{heading}</h1>
+      {/* {heading !== "settings" && <button onClick={create}></button>} */}
       {heading !== "settings" ? (
         <ul className={styles.sidebar_section_list}>
           {items.map((item) => (

@@ -1,14 +1,12 @@
 "use client";
 
-"use client";
-
 import React, { useEffect, useRef } from "react";
-import "./UpdatableInput.scss";
-import { prisma } from "@utils/prisma";
+import "./UpdatableField.scss";
+import { handleUpdateField } from "@app/actions/templateActions";
 
 function Field(props: {
   label: string;
-  value: string | number | undefined;
+  value: string | number | Date;
   resourceType: "template" | "campaign" | "event";
   size?: string;
   weight?: string;
@@ -18,17 +16,16 @@ function Field(props: {
   onClick?: () => void;
   children?: React.ReactNode;
   placeholder?: string;
+  classnames?: string[];
 }) {
   const {
     label,
     value,
-    resourceType,
-    size = "1em",
-    weight = "regular",
     type = "text",
     resourceId,
     inputType,
     placeholder,
+    classnames,
   } = props;
 
   const [isEditing, setIsEditing] = React.useState(false);
@@ -40,21 +37,6 @@ function Field(props: {
   }, [value]);
 
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleUpdateField = async (
-    id: string,
-    key: string,
-    val: string | number
-  ) => {
-    const updatedResource = await prisma.template.update({
-      where: {
-        id: id,
-      },
-      data: {
-        [key]: val,
-      },
-    });
-  };
 
   const handleClickOutside = (event: MouseEvent) => {
     if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
@@ -74,7 +56,7 @@ function Field(props: {
 
   useEffect(() => {
     if (!isEditing && inputValue !== value) {
-      // Call update fn or not by comparing existing value to new input
+      handleUpdateField(resourceId, label, inputValue);
     }
   }, [isEditing, inputValue]);
 
@@ -82,7 +64,7 @@ function Field(props: {
     if (isEditing && label === "phase_name") {
       return (
         <input
-          className={`input ${size} ${weight}`}
+          className={classnames?.join(" ")}
           type={inputType}
           onChange={(e) => setInputValue(e.target.value)}
           value={inputValue}
@@ -94,7 +76,7 @@ function Field(props: {
     if (isEditing && label === "phase_number") {
       return (
         <input
-          className={`input ${size} ${weight}`}
+          className={classnames?.join(" ")}
           type={type}
           onChange={(e) => setInputValue(e.target.value)}
           value={inputValue}
@@ -108,7 +90,7 @@ function Field(props: {
     if (isEditing && !label.includes("phase")) {
       return (
         <input
-          className={`input ${size} ${weight}`}
+          className={classnames?.join(" ")}
           type={type}
           onChange={(e) => setInputValue(e.target.value)}
           value={inputValue}
@@ -120,10 +102,7 @@ function Field(props: {
       );
     }
     return (
-      <div
-        onClick={() => setIsEditing(true)}
-        className={`input-value ${size} ${weight} ${label}`}
-      >
+      <div onClick={() => setIsEditing(true)} className={classnames?.join(" ")}>
         {label === "phase_number" && `Phase `}
         {value}
         {!value && placeholder && (

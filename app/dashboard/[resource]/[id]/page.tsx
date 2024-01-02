@@ -2,23 +2,29 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 import {
-  getResourceForUserById,
-  getTemplates,
+  getEventsByTemplateId,
   getUniqueTemplateByUser,
 } from "@hooks/templates";
+import ResourceHeader from "@components/ui/ResourceHeader";
+import ResourceTable from "@components/ui/ResourceTable";
 
 const Page = async ({ params }: any) => {
   const { getUser } = getKindeServerSession();
 
   const user = await getUser();
   const resource = await getUniqueTemplateByUser(params.id, user);
+  const events = await getEventsByTemplateId(params.id, user);
 
-  console.log(resource);
+  console.log(events);
 
   return (
     <div>
-      <h1>{resource?.name}</h1>
-      <p>{resource?.description}</p>
+      <ResourceHeader
+        id={params.id}
+        type={params.resource}
+        resource={resource as ResourceType}
+      />
+      <ResourceTable events={events} />
     </div>
   );
 };

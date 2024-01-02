@@ -72,3 +72,27 @@ export async function getResourceForUserById(
     }
   }
 }
+
+export const getEventsByTemplateId = async (
+  id: string,
+  user: KindeUser | null
+) => {
+  if (!id || !user) return;
+  let isLoading = true;
+  let events;
+  let error;
+
+  try {
+    events = prisma.event.findMany({
+      where: {
+        templateId: id,
+      },
+    });
+
+    return events;
+  } catch (err: any) {
+    error = err;
+  }
+
+  return { isLoading, events, error };
+};

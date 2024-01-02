@@ -1,37 +1,27 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@utils/prisma";
-import { createEvent } from "./eventActions";
 
-export async function create(userId: string) {
-  // const input = formData.get("input") as string;
-
-  // if (!input.trim()) {
-  //   return;
-  // }
-
-  const template = await prisma.template.create({
+export async function createEvent(templateId: string, userId: string) {
+  const event = await prisma.event.create({
     data: {
-      name: "Untitled",
+      name: "",
       description: "",
       kinde_id: userId,
+      templateId,
+      type: "template",
     },
   });
 
-  if (template) {
-    const event = await createEvent(template.id, userId);
-    console.log(event);
-  }
-
   revalidatePath("/");
-  return template;
+  return event;
 }
 
 export async function edit(formData: FormData) {
   const input = formData.get("newTitle") as string;
   const inputId = formData.get("inputId") as string;
 
-  await prisma.template.update({
+  await prisma.event.update({
     where: {
       id: inputId,
     },
@@ -46,7 +36,7 @@ export async function update(formData: FormData, id: string) {
   for (let key in formData) {
     const input = formData.get(key) as string;
 
-    await prisma.template.update({
+    await prisma.event.update({
       where: {
         id: id,
       },
@@ -62,7 +52,7 @@ export async function update(formData: FormData, id: string) {
 export async function deleteTodo(formData: FormData) {
   const inputId = formData.get("inputId") as string;
 
-  await prisma.template.delete({
+  await prisma.event.delete({
     where: {
       id: inputId,
     },
@@ -73,19 +63,19 @@ export async function deleteTodo(formData: FormData) {
 
 export async function todoStatus(formData: FormData) {
   const inputId = formData.get("inputId") as string;
-  const template = await prisma.template.findUnique({
+  const event = await prisma.event.findUnique({
     where: {
       id: inputId,
     },
   });
 
-  if (!template) {
+  if (!event) {
     return;
   }
 
-  //   const updatedStatus = !template.isCompleted;
+  //   const updatedStatus = !event.isCompleted;
 
-  await prisma.template.update({
+  await prisma.event.update({
     where: {
       id: inputId,
     },
@@ -106,7 +96,7 @@ export const handleUpdateField = async (
 ) => {
   try {
     console.log(key, val);
-    const updatedResource = await prisma.template.update({
+    const updatedResource = await prisma.event.update({
       where: {
         id: id,
       },

@@ -1,6 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@&display=swap');
 
-$font-family: 'Roboto', sans-serif;
 
 html {
     box-sizing: border-box;
@@ -9,7 +7,6 @@ html {
 }
 
 body {
-    font-family: $font-family;
     margin: 0;
     padding: 0;
 }
@@ -57,4 +54,12 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.capitalize {
+    text-transform: capitalize;
 }

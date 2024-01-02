@@ -9,6 +9,7 @@ import Link from "next/link";
 import Modal from "./Modal";
 import { create } from "@app/actions/templateActions";
 import SidebarSection from "./SidebarSection";
+import { createEvent } from "@app/actions/eventActions";
 
 const Sidebar = ({ data }: { data: SidebarTypes[] }) => {
   const [isShowing, setIsShowing] = useState(true);
@@ -39,12 +40,18 @@ const Sidebar = ({ data }: { data: SidebarTypes[] }) => {
       >
         {data.map((category, index) => {
           return (
-            <SidebarSection
-              heading={category.heading}
-              items={category.items}
-              type={category.type}
-              key={category.heading + index}
-            />
+            <React.Fragment key={category.heading + index}>
+              <SidebarSection
+                heading={category.heading}
+                items={category.items}
+                type={category.type}
+              />
+              {category.type !== "settings" && (
+                <button onClick={() => setDisplayModal(category.type)}>
+                  New {category.type}
+                </button>
+              )}
+            </React.Fragment>
           );
         })}
         <div className="user-detail">
@@ -66,7 +73,7 @@ const Sidebar = ({ data }: { data: SidebarTypes[] }) => {
       <Modal
         onSave={handleAddTemplate}
         onCancel={() => setDisplayModal("")}
-        display={displayModal === "campaigns" || displayModal === "templates"}
+        display={displayModal === "campaign" || displayModal === "template"}
       >
         Add {displayModal}
       </Modal>

@@ -13,6 +13,7 @@ const EditResource = ({ resource }: { resource: resourceType }) => {
 
   const handleEdit = () => {
     setEditResource(!editResource);
+    77;
   };
 
   const handleSubmit = () => {
