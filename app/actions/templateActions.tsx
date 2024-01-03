@@ -99,11 +99,7 @@ export async function todoStatus(formData: FormData) {
   //   return updatedStatus;
 }
 
-export const handleUpdateField = async (
-  id: string,
-  key: string,
-  val: string | number
-) => {
+export const updateField = async (id: any, key: any, val: any) => {
   try {
     console.log(key, val);
     const updatedResource = await prisma.template.update({

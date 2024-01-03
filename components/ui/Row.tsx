@@ -2,36 +2,29 @@ import React from "react";
 import Cell from "./Cell";
 
 type RowType = {
-  data: {} | any[];
+  data: any | any[];
   isHeader: boolean;
 };
 
 const Row = ({ data, isHeader }: RowType) => {
   const renderCells = () => {
     const keys = Object.keys(data);
-    console.log(keys);
+    console.log(data);
     return keys.map((key) => {
-      return <Cell value={key} />;
+      return (
+        <Cell
+          type={data.type}
+          label={key}
+          value={data[key]}
+          key={crypto.randomUUID()}
+          id={data.id}
+        />
+      );
     });
   };
+  console.log(data);
 
-  const renderHeaders = () => {
-    if (isHeader) {
-      return data.map((key: string) => {
-        return (
-          <Cell
-            type="template"
-            value={key}
-            id="header"
-            label={key}
-            key={crypto.randomUUID()}
-          />
-        );
-      });
-    }
-  };
-
-  return <div>{isHeader ? renderHeaders() : renderCells()}</div>;
+  return <div>{renderCells()}</div>;
 };
 
 export default Row;

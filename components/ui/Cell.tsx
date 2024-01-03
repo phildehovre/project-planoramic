@@ -2,7 +2,7 @@ import React from "react";
 import UpdatableField from "./UpdatableField";
 
 type CellType = {
-  value: string | number | Date;
+  value: any;
   type: "template" | "campaign" | "event";
   id: string;
   label: string;

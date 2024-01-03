@@ -9,7 +9,7 @@ export async function createEvent(templateId: string, userId: string) {
       description: "",
       kinde_id: userId,
       templateId,
-      type: "template",
+      type: "event",
     },
   });
 

@@ -2,11 +2,12 @@
 
 import React, { useEffect, useRef } from "react";
 import "./UpdatableField.scss";
-import { handleUpdateField } from "@app/actions/templateActions";
+import { updateField } from "@app/actions/actions";
+import Form from "./Form";
 
 function Field(props: {
   label: string;
-  value: string | number | Date;
+  value: any;
   resourceType: "template" | "campaign" | "event";
   size?: string;
   weight?: string;
@@ -21,11 +22,12 @@ function Field(props: {
   const {
     label,
     value,
-    type = "text",
+    type,
     resourceId,
     inputType,
     placeholder,
     classnames,
+    resourceType,
   } = props;
 
   const [isEditing, setIsEditing] = React.useState(false);
@@ -33,7 +35,7 @@ function Field(props: {
   const [initialValue, setInitialtValue] = React.useState(value);
 
   useEffect(() => {
-    setInitialtValue((prev) => (value !== prev ? value : prev));
+    setInitialtValue((prev: any) => (value !== prev ? value : prev));
   }, [value]);
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -56,49 +58,29 @@ function Field(props: {
 
   useEffect(() => {
     if (!isEditing && inputValue !== value) {
-      handleUpdateField(resourceId, label, inputValue);
+      updateField(resourceType, resourceId, label, inputValue);
     }
   }, [isEditing, inputValue]);
 
   const renderInput = () => {
-    if (isEditing && label === "phase_name") {
+    if (isEditing) {
       return (
-        <input
-          className={classnames?.join(" ")}
-          type={inputType}
-          onChange={(e) => setInputValue(e.target.value)}
-          value={inputValue}
-          ref={inputRef}
-          autoFocus
-        />
-      );
-    }
-    if (isEditing && label === "phase_number") {
-      return (
-        <input
-          className={classnames?.join(" ")}
-          type={type}
-          onChange={(e) => setInputValue(e.target.value)}
-          value={inputValue}
-          ref={inputRef}
-          placeholder={value?.toString()}
-          size={value?.toString().length}
-          autoFocus
-        />
-      );
-    }
-    if (isEditing && !label.includes("phase")) {
-      return (
-        <input
-          className={classnames?.join(" ")}
-          type={type}
-          onChange={(e) => setInputValue(e.target.value)}
-          value={inputValue}
-          ref={inputRef}
-          placeholder={value?.toString()}
-          size={value?.toString().length}
-          autoFocus
-        />
+        <Form
+          action={() =>
+            updateField(resourceType, resourceId, label, inputValue)
+          }
+        >
+          <input
+            className={classnames?.join(" ")}
+            type={type}
+            onChange={(e) => setInputValue(e.target.value)}
+            value={inputValue}
+            ref={inputRef}
+            placeholder={value?.toString()}
+            size={value?.toString().length}
+            autoFocus
+          />
+        </Form>
       );
     }
     return (
