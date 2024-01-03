@@ -15,8 +15,6 @@ const Page = async ({ params }: any) => {
   const resource = await getUniqueTemplateByUser(params.id, user);
   const events = await getEventsByTemplateId(params.id, user);
 
-  console.log(events);
-
   return (
     <div>
       <ResourceHeader

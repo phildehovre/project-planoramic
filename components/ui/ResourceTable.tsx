@@ -7,7 +7,7 @@ type ResourceTableTypes = {
 
 const ResourceTable = ({ events }: any) => {
   const placeholder = "Your event title";
-  const headers = Object.keys(events[0]);
+  // const headers = Object.keys(events[0]);
   return (
     <div>
       <h1>Table</h1>

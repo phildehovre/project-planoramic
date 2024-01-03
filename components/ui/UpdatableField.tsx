@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { startTransition, useEffect, useRef } from "react";
 import "./UpdatableField.scss";
 import { updateField } from "@app/actions/actions";
 import Form from "./Form";
+import { useOptimistic } from "react";
 
 function Field(props: {
   label: string;
@@ -34,6 +35,13 @@ function Field(props: {
   const [inputValue, setInputValue] = React.useState(value);
   const [initialValue, setInitialtValue] = React.useState(value);
 
+  const [optimisticValue, setOptimisticValue] = useOptimistic(
+    value,
+    (state, newValue) => {
+      return [newValue];
+    }
+  );
+
   useEffect(() => {
     setInitialtValue((prev: any) => (value !== prev ? value : prev));
   }, [value]);
@@ -42,9 +50,22 @@ function Field(props: {
 
   const handleClickOutside = (event: MouseEvent) => {
     if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
+      handleOptimisticUpdate();
       setIsEditing(false);
+      setInputValue(initialValue);
     }
   };
+
+  const handleOptimisticUpdate = async () => {
+    if (inputValue !== value) {
+      startTransition(() => {
+        setOptimisticValue(inputValue);
+      });
+
+      await updateField(resourceType, resourceId, label, inputValue);
+    }
+  };
+
   useEffect(() => {
     if (isEditing) {
       document.addEventListener("mousedown", handleClickOutside);
@@ -54,21 +75,23 @@ function Field(props: {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isEditing]);
+  }, [isEditing, inputValue]);
+
+  console.log(resourceType);
 
   useEffect(() => {
-    if (!isEditing && inputValue !== value) {
-      updateField(resourceType, resourceId, label, inputValue);
+    if (!isEditing) {
+      handleOptimisticUpdate();
     }
-  }, [isEditing, inputValue]);
+  }, [isEditing]);
 
   const renderInput = () => {
     if (isEditing) {
       return (
         <Form
-          action={() =>
-            updateField(resourceType, resourceId, label, inputValue)
-          }
+          action={() => {
+            setIsEditing(false);
+          }}
         >
           <input
             className={classnames?.join(" ")}
@@ -86,7 +109,7 @@ function Field(props: {
     return (
       <div onClick={() => setIsEditing(true)} className={classnames?.join(" ")}>
         {label === "phase_number" && `Phase `}
-        {value}
+        {optimisticValue}
         {!value && placeholder && (
           <span className="placeholder italic">{placeholder}</span>
         )}

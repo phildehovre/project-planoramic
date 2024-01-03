@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 
 interface FormProps {
   children: ReactNode;
-  action: (formData: FormData) => Promise<void | boolean>;
+  action: (data: any) => void;
   className?: string;
   onSubmit?: () => void;
 }
@@ -17,7 +17,7 @@ const Form = ({ children, action, className, onSubmit }: FormProps) => {
       className={className}
       onSubmit={onSubmit}
       ref={ref}
-      action={async (formData) => {
+      action={async (formData: any) => {
         await action(formData);
         ref.current?.reset();
       }}
