@@ -77,6 +77,9 @@ model Event {
   name        String
   kinde_id    String
   description String
+  entity      String
+  range       Int
+  unit        String
   userId      String?   @db.ObjectId
   type        String
   campaignId  String?   @db.ObjectId

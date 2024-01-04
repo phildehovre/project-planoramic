@@ -10,7 +10,6 @@ function Field(props: {
   label: string;
   value: any;
   resourceType: "template" | "campaign" | "event";
-  size?: string;
   weight?: string;
   resourceId: string;
   type?: string;
@@ -19,6 +18,7 @@ function Field(props: {
   children?: React.ReactNode;
   placeholder?: string;
   classnames?: string[];
+  isHeader?: boolean;
 }) {
   const {
     label,
@@ -29,6 +29,7 @@ function Field(props: {
     placeholder,
     classnames,
     resourceType,
+    isHeader,
   } = props;
 
   const [isEditing, setIsEditing] = React.useState(false);
@@ -42,11 +43,24 @@ function Field(props: {
     }
   );
 
+  const conditionalClassnames =
+    isEditing && classnames
+      ? [...classnames, "active"]
+      : classnames
+      ? [...classnames, "passive"]
+      : ["passive"];
+
   useEffect(() => {
     setInitialtValue((prev: any) => (value !== prev ? value : prev));
   }, [value]);
 
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleCellClick = () => {
+    if (!isHeader) {
+      setIsEditing(true);
+    }
+  };
 
   const handleClickOutside = (event: MouseEvent) => {
     if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
@@ -77,8 +91,6 @@ function Field(props: {
     };
   }, [isEditing, inputValue]);
 
-  console.log(resourceType);
-
   useEffect(() => {
     if (!isEditing) {
       handleOptimisticUpdate();
@@ -92,31 +104,37 @@ function Field(props: {
           action={() => {
             setIsEditing(false);
           }}
+          className={conditionalClassnames?.join(" ")}
         >
           <input
-            className={classnames?.join(" ")}
             type={type}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={(e) =>
+              setInputValue(
+                type === "number" ? parseFloat(e.target.value) : e.target.value
+              )
+            }
             value={inputValue}
             ref={inputRef}
-            placeholder={value?.toString()}
-            size={value?.toString().length}
+            placeholder={value}
             autoFocus
           />
         </Form>
       );
     }
     return (
-      <div onClick={() => setIsEditing(true)} className={classnames?.join(" ")}>
+      <div
+        onClick={handleCellClick}
+        className={conditionalClassnames?.join(" ")}
+      >
         {label === "phase_number" && `Phase `}
         {optimisticValue}
-        {!value && placeholder && (
+        {!optimisticValue && !value && placeholder && type !== "number" && (
           <span className="placeholder italic">{placeholder}</span>
         )}
       </div>
     );
   };
-  return <div>{renderInput()}</div>;
+  return <>{renderInput()}</>;
 }
 
 export default Field;

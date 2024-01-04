@@ -7,3 +7,8 @@
 .resource_description {
     padding: 1em 0;
 }
+
+.active {
+    z-index: 1;
+    outline: 2px dodgerblue solid;
+}

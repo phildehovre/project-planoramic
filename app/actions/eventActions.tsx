@@ -10,6 +10,9 @@ export async function createEvent(templateId: string, userId: string) {
       kinde_id: userId,
       templateId,
       type: "event",
+      entity: "",
+      range: 0,
+      unit: "",
     },
   });
 

@@ -18,6 +18,9 @@ interface TemplateType extends ResourceType {
 interface EventType extends ResourceType {
   templateId: string;
   campaignId?: string;
+  entity?: string;
+  range?: number;
+  unit?: string;
 }
 
 interface User {
