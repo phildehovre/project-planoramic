@@ -16,14 +16,14 @@
         }
     }
 
-    &_pull-tab {
-        position: absolute;
-        display: block;
-        height: 100%;
+    &_pull_tab {
+        height: 100svh;
         width: 15px;
         display: flex;
         align-items: center;
         text-align: center;
+        background-color: rgba(128, 128, 128, 0.144);
+        cursor: pointer;
     }
     &_category {
         display: flex;

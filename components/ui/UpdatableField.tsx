@@ -5,6 +5,9 @@ import "./UpdatableField.scss";
 import { updateField } from "@app/actions/actions";
 import Form from "./Form";
 import { useOptimistic } from "react";
+import Select from "./Select";
+import { entityOptions, unitOptions } from "@lib/SelectOptions";
+import { capitalize } from "@utils/helpers";
 
 function Field(props: {
   label: string;
@@ -78,6 +81,7 @@ function Field(props: {
 
       await updateField(resourceType, resourceId, label, inputValue);
     }
+    setIsEditing(false);
   };
 
   useEffect(() => {
@@ -92,32 +96,52 @@ function Field(props: {
   }, [isEditing, inputValue]);
 
   useEffect(() => {
-    if (!isEditing) {
+    if (inputValue !== value) {
       handleOptimisticUpdate();
     }
-  }, [isEditing]);
+  }, [inputValue]);
 
   const renderInput = () => {
     if (isEditing) {
       return (
         <Form
           action={() => {
-            setIsEditing(false);
+            handleOptimisticUpdate();
           }}
           className={conditionalClassnames?.join(" ")}
         >
-          <input
-            type={type}
-            onChange={(e) =>
-              setInputValue(
-                type === "number" ? parseFloat(e.target.value) : e.target.value
-              )
-            }
-            value={inputValue}
-            ref={inputRef}
-            placeholder={value}
-            autoFocus
-          />
+          {type === "select" && (
+            <Select
+              label={label}
+              isOpen={isEditing}
+              options={label === "entity" ? entityOptions : unitOptions}
+              value={optimisticValue || value}
+              onOptionClick={(e: any) => {
+                setInputValue(e);
+                handleOptimisticUpdate();
+              }}
+              setIsEditing={setIsEditing}
+              handleCellClick={() => {
+                setIsEditing(true);
+              }}
+            />
+          )}
+          {type !== "select" && (
+            <input
+              type={type}
+              onChange={(e) =>
+                setInputValue(
+                  type === "number"
+                    ? parseFloat(e.target.value)
+                    : e.target.value
+                )
+              }
+              value={inputValue}
+              ref={inputRef}
+              placeholder={value}
+              autoFocus
+            />
+          )}
         </Form>
       );
     }
@@ -127,9 +151,9 @@ function Field(props: {
         className={conditionalClassnames?.join(" ")}
       >
         {label === "phase_number" && `Phase `}
-        {optimisticValue}
+        {capitalize(optimisticValue)}
         {!optimisticValue && !value && placeholder && type !== "number" && (
-          <span className="placeholder italic">{placeholder}</span>
+          <span className="placeholder italic">{placeholder}...</span>
         )}
       </div>
     );

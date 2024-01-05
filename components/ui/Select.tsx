@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useRef } from "react";
 import * as Select from "@radix-ui/react-select";
 import classnames from "classnames";
@@ -8,8 +6,9 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
 } from "@radix-ui/react-icons";
-import "./Select.scss";
+import styles from "./Select.module.scss";
 import SelectItem from "./SelectItem";
+import { ClimbingBoxLoader } from "react-spinners";
 
 const useOnClickOutside = (
   ref: React.RefObject<any>,
@@ -37,72 +36,72 @@ const useOnClickOutside = (
 const CustomSelect = (props: {
   label: string;
   options: { label: string; value: string; color: string }[];
-  register: any;
+  register?: any;
   onOptionClick: (value: string) => void;
   setIsEditing: (bool: boolean) => void;
-  isOpen: boolean;
   value: string;
   handleCellClick: () => void;
+  isOpen: boolean;
 }) => {
   const {
     label,
+    isOpen,
     options,
     register,
     onOptionClick,
     setIsEditing,
-    isOpen,
     value,
     handleCellClick,
   } = props;
 
-  const [selectedValue, setSelectedValue] = React.useState("");
+  const [selectedValue, setSelectedValue] = React.useState(value);
   const selectRef = useRef<HTMLDivElement>(null);
 
   useOnClickOutside(selectRef, () => {
     setIsEditing(false);
   });
 
-  const handleOptionClick = (value: string) => {
-    setSelectedValue(value);
-    onOptionClick(value);
-    setIsEditing(false);
-  };
-
-  const formatValue = (value: string) => {
-    if (value && value.length > 0) {
-      let formattedValue = value.replace(/_/g, " ");
-      formattedValue =
-        formattedValue[0].toUpperCase() + formattedValue.slice(1);
-      return formattedValue;
-    }
-  };
-
   return (
     <Select.Root
-      onValueChange={(e) => {
-        handleOptionClick(e);
+      value={value}
+      open={isOpen}
+      onValueChange={(e: any) => {
+        console.log(e);
+        setSelectedValue(e);
+        onOptionClick(e);
+        setIsEditing(false);
       }}
-      onOpenChange={(e) => {
+      onOpenChange={(open) => {
         handleCellClick();
+        setIsEditing(open);
       }}
     >
-      <Select.Trigger className="SelectTrigger" aria-label="Food">
+      <Select.Trigger
+        className={classnames("SelectTrigger", styles.select_trigger)}
+        aria-label={label}
+      >
         <Select.Value asChild={true}>
-          <span>{formatValue(value)}</span>
-          {/* <span>{value}</span> */}
+          <span>{value}</span>
         </Select.Value>
-        <Select.Icon className="SelectIcon">
+        {/* <Select.Icon className="SelectIcon">
           <ChevronDownIcon />
-        </Select.Icon>
+        </Select.Icon> */}
       </Select.Trigger>
       <Select.Portal>
-        <Select.Content className="SelectContent">
+        <Select.Content
+          position="popper"
+          className={classnames("SelectContent", styles.select_content)}
+        >
           <Select.ScrollUpButton className="SelectScrollButton">
             <ChevronUpIcon />
           </Select.ScrollUpButton>
           <Select.Viewport className="SelectViewport">
             <Select.Group>
-              <Select.Label className="SelectLabel">Who</Select.Label>
+              {/* <Select.Label
+                className={classnames("SelectLabel", styles.select_)}
+              >
+                {label}
+              </Select.Label> */}
               {options.map(
                 (
                   option: { value: string; label: string; color: string },
@@ -114,7 +113,8 @@ const CustomSelect = (props: {
                       value={option.value}
                       className={classnames(
                         "SelectItem",
-                        option.value === "banana" && "SelectItem--selected"
+                        styles.select_item,
+                        option.value === selectedValue && "SelectItem--selected"
                       )}
                       color={option.color}
                     >

@@ -14,8 +14,6 @@ type CellType = {
 };
 
 const Cell = ({ value, type, id, label, isHeader }: CellType) => {
-  const [isEditing, setIsEditing] = React.useState(false);
-
   // Check if label is in TableHeaders
   let headerArray: string[] = [];
   TableHeaders.forEach((header) => {
@@ -49,8 +47,6 @@ const Cell = ({ value, type, id, label, isHeader }: CellType) => {
       placeholder={label}
       type={inputType}
       isHeader={isHeader}
-      isEditing={isEditing}
-      setIsEditing={setIsEditing}
     />
   );
 };

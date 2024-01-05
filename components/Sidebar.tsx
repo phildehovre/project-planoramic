@@ -9,7 +9,6 @@ import Link from "next/link";
 import Modal from "./Modal";
 import { create } from "@app/actions/templateActions";
 import SidebarSection from "./SidebarSection";
-import { createEvent } from "@app/actions/eventActions";
 
 const Sidebar = ({ data }: { data: SidebarTypes[] }) => {
   const [isShowing, setIsShowing] = useState(true);
@@ -21,10 +20,10 @@ const Sidebar = ({ data }: { data: SidebarTypes[] }) => {
     setIsExtended((prev) => (prev === heading ? "" : heading));
   };
 
-  const handleAddTemplate = async () => {
+  const handleCreateTemplate = async () => {
     if (user) {
       try {
-        await create(user.id);
+        await create(user.id, 1);
         setDisplayModal("");
       } catch (err) {
         console.log(err);
@@ -65,13 +64,13 @@ const Sidebar = ({ data }: { data: SidebarTypes[] }) => {
         </div>
       </aside>
       <div
-        className="sidebar_pull-tab"
+        className={styles.sidebar_pull_tab}
         onClick={() => setIsShowing((prev) => !prev)}
       >
         {isShowing ? "<<" : ">>"}
       </div>
       <Modal
-        onSave={handleAddTemplate}
+        onSave={handleCreateTemplate}
         onCancel={() => setDisplayModal("")}
         display={displayModal === "campaign" || displayModal === "template"}
       >

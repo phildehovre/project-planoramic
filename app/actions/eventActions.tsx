@@ -2,7 +2,11 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@utils/prisma";
 
-export async function createEvent(templateId: string, userId: string) {
+export async function createEvent(
+  templateId: string,
+  userId: string,
+  phaseNumber: number
+) {
   const event = await prisma.event.create({
     data: {
       name: "",
@@ -13,6 +17,7 @@ export async function createEvent(templateId: string, userId: string) {
       entity: "",
       range: 0,
       unit: "",
+      phase_number: phaseNumber,
     },
   });
 

@@ -21,6 +21,7 @@ interface EventType extends ResourceType {
   entity?: string;
   range?: number;
   unit?: string;
+  phase_number?: number;
 }
 
 interface User {

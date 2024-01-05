@@ -3,13 +3,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@utils/prisma";
 import { createEvent } from "./eventActions";
 
-export async function create(userId: string) {
-  // const input = formData.get("input") as string;
-
-  // if (!input.trim()) {
-  //   return;
-  // }
-
+export async function create(userId: string, phaseNumber: number) {
   const template = await prisma.template.create({
     data: {
       name: "Untitled",
@@ -19,8 +13,7 @@ export async function create(userId: string) {
   });
 
   if (template) {
-    const event = await createEvent(template.id, userId);
-    console.log(event);
+    const event = await createEvent(template.id, userId, phaseNumber);
   }
 
   revalidatePath("/");
@@ -101,7 +94,6 @@ export async function todoStatus(formData: FormData) {
 
 export const updateField = async (id: any, key: any, val: any) => {
   try {
-    console.log(key, val);
     const updatedResource = await prisma.template.update({
       where: {
         id: id,
