@@ -59,17 +59,16 @@ function Field(props: {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleCellClick = () => {
-    if (!isHeader) {
-      setIsEditing(true);
-    }
-  };
-
   const handleClickOutside = (event: MouseEvent) => {
     if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
       handleOptimisticUpdate();
       setIsEditing(false);
       setInputValue(initialValue);
+    }
+  };
+  const handleCellClick = () => {
+    if (!isHeader) {
+      setIsEditing(true);
     }
   };
 

@@ -9,7 +9,7 @@ const Ellipsis = ({
   options,
 }: {
   options: {
-    onOptionClick?: () => void;
+    onOptionClick: () => Promise<void>;
     type?: string;
     label: string;
     url?: string;
@@ -44,15 +44,19 @@ const Ellipsis = ({
       />
       {open && (
         <div ref={inputRef} className={styles.ellipsis_dropdown}>
-          {options.map((option) => {
+          {options.map((option, index) => {
             return (
-              <div
-                key={option.label}
-                className={styles.ellipsis_dropdown_item}
-                onClick={option.onOptionClick}
-              >
-                {capitalize(option.label)}
-              </div>
+              <React.Fragment key={option.label}>
+                <div
+                  className={styles.ellipsis_dropdown_item}
+                  onClick={option.onOptionClick}
+                >
+                  {capitalize(option.label)}
+                </div>
+                {/* {index !== options.length - 1 && (
+                  <hr className={styles.ellipsis_separator} />
+                )} */}
+              </React.Fragment>
             );
           })}
         </div>

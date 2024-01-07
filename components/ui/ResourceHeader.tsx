@@ -3,6 +3,8 @@
 import React from "react";
 import UpdatableField from "./UpdatableField";
 import Ellipsis from "./Ellipsis";
+import { handleDeleteResource, handlePublishPhase } from "@app/actions/actions";
+import { handlePublishCampaign } from "@app/actions/campaignActions";
 
 type ResourceHeaderTypes = {
   id: string;
@@ -13,12 +15,12 @@ type ResourceHeaderTypes = {
 const ResourceHeader = ({ id, type, resource }: ResourceHeaderTypes) => {
   const options = [
     {
-      label: "edit",
-      onOptionClick: () => console.log("edit"),
+      label: "publish",
+      onOptionClick: () => handlePublishCampaign(id),
     },
     {
       label: "delete",
-      onOptionClick: () => console.log("delete"),
+      onOptionClick: () => handleDeleteResource(id),
     },
   ];
 

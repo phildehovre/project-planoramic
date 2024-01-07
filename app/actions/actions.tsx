@@ -42,3 +42,19 @@ export const updateField = async (
     throw error;
   }
 };
+
+export const handleDuplicatePhase = async (phase: number | undefined) => {
+  console.log(phase);
+};
+
+export const handleDeletePhase = async (phase: number | undefined) => {
+  console.log(phase);
+};
+
+export const handlePublishPhase = async (phase: number | undefined) => {
+  console.log(phase);
+};
+
+export const handleDeleteResource = async (id: string) => {
+  console.log(id);
+};
