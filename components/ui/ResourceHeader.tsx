@@ -5,6 +5,7 @@ import UpdatableField from "./UpdatableField";
 import Ellipsis from "./Ellipsis";
 import { handleDeleteResource, handlePublishPhase } from "@app/actions/actions";
 import { handlePublishCampaign } from "@app/actions/campaignActions";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 
 type ResourceHeaderTypes = {
   id: string;
@@ -34,7 +35,7 @@ const ResourceHeader = ({ id, type, resource }: ResourceHeaderTypes) => {
           resourceId={id}
           classnames={["resource_title"]}
         />
-        <Ellipsis options={options} />
+        <Ellipsis options={options} Icon={DotsHorizontalIcon} active={true} />
       </span>
       <UpdatableField
         label="description"

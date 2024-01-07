@@ -2,7 +2,11 @@
 import React, { useEffect, useState } from "react";
 import Row from "./Row";
 import styles from "./ResourceTable.module.scss";
-import { PlusIcon } from "@radix-ui/react-icons";
+import {
+  DotsHorizontalIcon,
+  DotsVerticalIcon,
+  PlusIcon,
+} from "@radix-ui/react-icons";
 import { createEvent } from "@app/actions/eventActions";
 import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/dist/types";
 import classnames from "classnames";
@@ -119,6 +123,7 @@ const Phase = ({
       <span style={{ display: "flex", gap: "1em", alignItems: "center" }}>
         <h1>Phase {phaseNumber}</h1>
         <Ellipsis
+          Icon={DotsHorizontalIcon}
           options={[
             {
               label: "duplicate",
@@ -133,6 +138,26 @@ const Phase = ({
               onOptionClick: () => handlePublishPhase(phaseNumber),
             },
           ]}
+          active={true}
+        />
+
+        <Ellipsis
+          Icon={DotsVerticalIcon}
+          options={[
+            {
+              label: "move to",
+              onOptionClick: () => handleDuplicatePhase(phaseNumber),
+            },
+            {
+              label: "copy to",
+              onOptionClick: () => handleDeletePhase(phaseNumber),
+            },
+            {
+              label: "delete",
+              onOptionClick: () => handlePublishPhase(phaseNumber),
+            },
+          ]}
+          active={rows.some((row) => selectedRows.includes(row.id))}
         />
       </span>
       <Row

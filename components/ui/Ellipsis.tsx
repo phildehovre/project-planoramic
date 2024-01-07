@@ -4,17 +4,21 @@ import React, { useEffect, useRef } from "react";
 import { DotsVerticalIcon } from "@radix-ui/react-icons";
 import styles from "./Ellipsis.module.scss";
 import { capitalize } from "@utils/helpers";
+import classnames from "classnames";
 
-const Ellipsis = ({
-  options,
-}: {
+type EllipsisTypes = {
   options: {
     onOptionClick: () => Promise<void>;
     type?: string;
     label: string;
     url?: string;
   }[];
-}) => {
+  Icon: React.JSXElementConstructor<any>;
+  active?: boolean;
+  showing?: boolean;
+};
+
+const Ellipsis = ({ options, Icon, active, showing = true }: EllipsisTypes) => {
   const [open, setOpen] = React.useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -38,9 +42,12 @@ const Ellipsis = ({
 
   return (
     <div>
-      <DotsVerticalIcon
+      <Icon
         onClick={() => setOpen(!open)}
-        className={styles.ellipsis_btn}
+        className={classnames(
+          styles.ellipsis_btn,
+          active ? styles.active : styles.inactive
+        )}
       />
       {open && (
         <div ref={inputRef} className={styles.ellipsis_dropdown}>
@@ -53,9 +60,6 @@ const Ellipsis = ({
                 >
                   {capitalize(option.label)}
                 </div>
-                {/* {index !== options.length - 1 && (
-                  <hr className={styles.ellipsis_separator} />
-                )} */}
               </React.Fragment>
             );
           })}

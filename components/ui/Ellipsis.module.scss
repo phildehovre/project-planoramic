@@ -13,6 +13,14 @@
         &:hover {
             background-color: rgb(163, 163, 163);
         }
+
+        &.active {
+            animation: 350ms ease-in-out spin forwards;
+        }
+        &.inactive {
+            background-color: transparent;
+            color: transparent;
+        }
     }
         &_dropdown {
             position: absolute;
@@ -44,4 +52,11 @@
         }
 }
     
-    
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(180deg);
+        }
+    }

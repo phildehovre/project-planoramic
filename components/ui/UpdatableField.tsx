@@ -92,13 +92,13 @@ function Field(props: {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isEditing, inputValue]);
+  }, [isEditing]);
 
-  useEffect(() => {
-    if (inputValue !== value) {
-      handleOptimisticUpdate();
-    }
-  }, [inputValue]);
+  // useEffect(() => {
+  //   if (inputValue !== value) {
+  //     handleOptimisticUpdate();
+  //   }
+  // }, [inputValue]);
 
   const renderInput = () => {
     if (isEditing) {
