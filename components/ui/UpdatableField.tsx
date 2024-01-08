@@ -94,12 +94,6 @@ function Field(props: {
     };
   }, [isEditing]);
 
-  // useEffect(() => {
-  //   if (inputValue !== value) {
-  //     handleOptimisticUpdate();
-  //   }
-  // }, [inputValue]);
-
   const renderInput = () => {
     if (isEditing) {
       return (
