@@ -2,21 +2,11 @@
 import React, { useEffect, useState } from "react";
 import Row from "./Row";
 import styles from "./ResourceTable.module.scss";
-import {
-  DotsHorizontalIcon,
-  DotsVerticalIcon,
-  PlusIcon,
-} from "@radix-ui/react-icons";
+import { PlusIcon } from "@radix-ui/react-icons";
 import { createEvent } from "@app/actions/eventActions";
 import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/dist/types";
 import classnames from "classnames";
-import Ellipsis from "./Ellipsis";
-import {
-  handleDeletePhase,
-  handleDuplicatePhase,
-  handlePublishPhase,
-} from "@app/actions/actions";
-import { set } from "mongoose";
+import DropdownMenuDemo from "./Dropdown";
 
 type ResourceTableTypes = {
   events: EventType[];
@@ -30,6 +20,8 @@ type PhaseType = {
   onSelectAll: () => void;
   onRowSelect: (id: string) => void;
   selectedRows: string[];
+  selectedEventsOptions: OptionType[];
+  phaseOptions: OptionType[];
 };
 
 const ResourceTable = ({ events, resource, user }: ResourceTableTypes) => {
@@ -72,6 +64,41 @@ const ResourceTable = ({ events, resource, user }: ResourceTableTypes) => {
     setSelectedRows(Array.from(newSelectedRows));
   };
 
+  const selectedEventsOptions = [
+    {
+      label: "move to",
+      type: "move",
+      submenu: {
+        label: "phase(s)",
+        type: "phase",
+        values: [...phases],
+      },
+    },
+    {
+      label: "copy to",
+      type: "copy",
+    },
+    {
+      label: "delete",
+      type: "delete",
+    },
+  ];
+
+  const phaseOptions = [
+    {
+      label: "duplicate",
+      type: "duplicate",
+    },
+    {
+      label: "delete",
+      type: "delete",
+    },
+    {
+      label: "Push to Calendar",
+      type: "publish",
+    },
+  ];
+
   return (
     <div className={styles.table_ctn}>
       {phases.map((phaseNumber: number | undefined) => {
@@ -87,6 +114,8 @@ const ResourceTable = ({ events, resource, user }: ResourceTableTypes) => {
               }
               onRowSelect={handleSelectRow}
               selectedRows={selectedRows}
+              selectedEventsOptions={selectedEventsOptions}
+              phaseOptions={phaseOptions}
             />
             <button
               onClick={() =>
@@ -117,47 +146,41 @@ const Phase = ({
   onSelectAll,
   onRowSelect,
   selectedRows,
+  selectedEventsOptions,
+  phaseOptions,
 }: PhaseType) => {
+  const handlePhaseOptionClick = (type: string) => {
+    console.log(type);
+  };
+  const handleSelectedOptionClick = (type: string) => {
+    console.log(type);
+  };
+
   return (
     <div>
       <span style={{ display: "flex", gap: "1em", alignItems: "center" }}>
         <h1>Phase {phaseNumber}</h1>
-        <Ellipsis
+        {/* <Ellipsis
           Icon={DotsHorizontalIcon}
-          options={[
-            {
-              label: "duplicate",
-              onOptionClick: () => handleDuplicatePhase(phaseNumber),
-            },
-            {
-              label: "delete",
-              onOptionClick: () => handleDeletePhase(phaseNumber),
-            },
-            {
-              label: "Push to Calendar",
-              onOptionClick: () => handlePublishPhase(phaseNumber),
-            },
-          ]}
+          options={phaseOptions}
           active={true}
+          onOptionClick={handlePhaseOptionClick}
         />
 
         <Ellipsis
           Icon={DotsVerticalIcon}
-          options={[
-            {
-              label: "move to",
-              onOptionClick: () => handleDuplicatePhase(phaseNumber),
-            },
-            {
-              label: "copy to",
-              onOptionClick: () => handleDeletePhase(phaseNumber),
-            },
-            {
-              label: "delete",
-              onOptionClick: () => handlePublishPhase(phaseNumber),
-            },
-          ]}
+          options={selectedEventsOptions}
+          onOptionClick={handleSelectedOptionClick}
           active={rows.some((row) => selectedRows.includes(row.id))}
+          disabled={!rows.some((row) => selectedRows.includes(row.id))}
+        /> */}
+        <DropdownMenuDemo
+          options={phaseOptions}
+          onOptionsClick={handlePhaseOptionClick}
+        />
+        <DropdownMenuDemo
+          options={selectedEventsOptions}
+          onOptionClick={handleSelectedOptionClick}
         />
       </span>
       <Row

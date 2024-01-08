@@ -1,25 +1,20 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { DotsVerticalIcon } from "@radix-ui/react-icons";
 import styles from "./Ellipsis.module.scss";
 import { capitalize } from "@utils/helpers";
 import classnames from "classnames";
+import { TriangleRightIcon } from "@radix-ui/react-icons";
 
-type EllipsisTypes = {
-  options: {
-    onOptionClick: () => Promise<void>;
-    type?: string;
-    label: string;
-    url?: string;
-  }[];
-  Icon: React.JSXElementConstructor<any>;
-  active?: boolean;
-  showing?: boolean;
-};
-
-const Ellipsis = ({ options, Icon, active, showing = true }: EllipsisTypes) => {
+const Ellipsis = ({
+  options,
+  Icon,
+  active,
+  disabled = true,
+  onOptionClick,
+}: DropdownOptionType) => {
   const [open, setOpen] = React.useState(false);
+  const [submenuOpen, setSubmenuOpen] = React.useState("");
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -28,7 +23,6 @@ const Ellipsis = ({ options, Icon, active, showing = true }: EllipsisTypes) => {
       setOpen(false);
     }
   };
-
   useEffect(() => {
     if (open) {
       document.addEventListener("mousedown", handleClickOutside);
@@ -48,6 +42,7 @@ const Ellipsis = ({ options, Icon, active, showing = true }: EllipsisTypes) => {
           styles.ellipsis_btn,
           active ? styles.active : styles.inactive
         )}
+        disabled={disabled}
       />
       {open && (
         <div ref={inputRef} className={styles.ellipsis_dropdown}>
@@ -56,10 +51,25 @@ const Ellipsis = ({ options, Icon, active, showing = true }: EllipsisTypes) => {
               <React.Fragment key={option.label}>
                 <div
                   className={styles.ellipsis_dropdown_item}
-                  onClick={option.onOptionClick}
+                  onClick={() => onOptionClick(option.type)}
+                  onMouseEnter={() => {
+                    setSubmenuOpen(option.type);
+                  }}
+                  onMouseLeave={() => {
+                    setSubmenuOpen("");
+                  }}
                 >
                   {capitalize(option.label)}
                 </div>
+                {option.submenu &&
+                  submenuOpen === option.type &&
+                  option.submenu?.values?.map((value: any) => {
+                    return (
+                      <div className={styles.submenu} key={value}>
+                        <div className={styles.submenu_item}>{value}</div>
+                      </div>
+                    );
+                  })}
               </React.Fragment>
             );
           })}

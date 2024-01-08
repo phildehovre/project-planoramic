@@ -46,3 +46,25 @@ type SidebarSettingsMenuItems = {
   description: string;
   id?: string;
 };
+
+type OptionType = {
+  type: string;
+  label: string;
+  url?: string;
+  values?: any[];
+  submenu?: SubmenuType[];
+};
+
+type SubmenuType = {
+  label: string;
+  type: string;
+  values: any[];
+};
+
+type DropdownOptionType = {
+  options: OptionType[];
+  onOptionClick: (type: string) => void;
+  Icon: React.JSXElementConstructor<any>;
+  active?: boolean;
+  disabled?: boolean;
+};
