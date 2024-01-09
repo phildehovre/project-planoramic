@@ -1,6 +1,4 @@
-// Import Prisma client
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-
 import {
   getEventsByTemplateId,
   getUniqueTemplateByUser,
@@ -8,6 +6,7 @@ import {
 import ResourceHeader from "@components/ui/ResourceHeader";
 import ResourceTable from "@components/ui/ResourceTable";
 import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/dist/types";
+import { redirect } from "next/navigation";
 
 const Page = async ({ params }: any) => {
   const { getUser } = getKindeServerSession();
@@ -18,6 +17,11 @@ const Page = async ({ params }: any) => {
     user
   )) as ResourceType;
   const events = (await getEventsByTemplateId(params.id, user)) as EventType[];
+
+  if (!resource) {
+    console.log("no resource, redirecting from resource/page.tsx...");
+    redirect("/dashboard");
+  }
 
   return (
     <div>

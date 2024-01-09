@@ -57,17 +57,56 @@ export async function update(formData: FormData, id: string) {
   revalidatePath("/");
 }
 
-export async function deleteTodo(formData: FormData) {
-  const inputId = formData.get("inputId") as string;
-
+export async function deleteEvent(id: string) {
   await prisma.event.delete({
     where: {
-      id: inputId,
+      id,
     },
   });
 
   revalidatePath("/");
 }
+
+export async function deleteManyEvents(array: any[]) {
+  await prisma.event.deleteMany({
+    where: {
+      id: {
+        in: [...array],
+      },
+    },
+  });
+
+  revalidatePath("/");
+}
+
+export const useDeleteEvent = (id: string) => {
+  let isLoading = true;
+  let error;
+  let data;
+
+  try {
+    const deleteEvent = async () => {
+      await prisma.event
+        .delete({
+          where: {
+            id,
+          },
+        })
+        .then((res) => {
+          data = res;
+        });
+
+      revalidatePath("/");
+    };
+    data = deleteEvent;
+  } catch (err) {
+    error = err;
+  } finally {
+    isLoading = false;
+  }
+
+  return { data, isLoading, error };
+};
 
 export async function todoStatus(formData: FormData) {
   const inputId = formData.get("inputId") as string;
@@ -116,6 +155,42 @@ export const handleUpdateField = async (
     revalidatePath("/");
     // Handle success, if needed
     // console.log("Update successful:", updatedResource);
+  } catch (error: any) {
+    // Handle errors here
+    console.error("Error updating field:", error.message);
+    // Optionally, rethrow the error if you want to propagate it further
+    throw error;
+  }
+};
+
+export const copyManyEventsToPhase = async (
+  array: any[],
+  destinationPhase: number
+) => {
+  try {
+    const events = await prisma.event.findMany({
+      where: {
+        id: {
+          in: [...array],
+        },
+      },
+    });
+
+    const newEvents = events.map((event) => {
+      // Omitting the 'id' field to allow Prisma to generate a new one
+      const { id, ...eventWithoutId } = event;
+
+      return {
+        ...eventWithoutId,
+        phase_number: destinationPhase,
+      };
+    });
+
+    await prisma.event.createMany({
+      data: newEvents,
+    });
+
+    revalidatePath("/");
   } catch (error: any) {
     // Handle errors here
     console.error("Error updating field:", error.message);

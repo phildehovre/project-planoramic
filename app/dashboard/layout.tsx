@@ -4,10 +4,9 @@ import { getTemplates } from "@hooks/templates";
 import { getCampaigns } from "@hooks/campaigns";
 import Sidebar from "@components/Sidebar";
 import Spinner from "@components/Spinner";
+import { redirect } from "next/navigation";
 
 const Dashboard = async ({ children }: { children: React.ReactNode }) => {
-  // const { user, isAuthenticated, isLoading } = useKindeBrowserClient();
-
   const { isAuthenticated, getUser } = getKindeServerSession();
   const user = await getUser();
   const isLoggedIn = await isAuthenticated();
@@ -16,6 +15,9 @@ const Dashboard = async ({ children }: { children: React.ReactNode }) => {
   if (user !== null) {
     templates = await getTemplates(user.id);
     campaigns = await getCampaigns(user.id);
+  }
+  if (!templates) {
+    redirect("/dashboard");
   }
 
   const ressourceData: SidebarTypes[] = [

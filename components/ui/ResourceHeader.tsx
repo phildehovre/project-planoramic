@@ -6,6 +6,9 @@ import Ellipsis from "./Ellipsis";
 import { handleDeleteResource, handlePublishPhase } from "@app/actions/actions";
 import { handlePublishCampaign } from "@app/actions/campaignActions";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import Dropdown from "./Dropdown";
+import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 
 type ResourceHeaderTypes = {
   id: string;
@@ -16,14 +19,21 @@ type ResourceHeaderTypes = {
 const ResourceHeader = ({ id, type, resource }: ResourceHeaderTypes) => {
   const options = [
     {
-      label: "publish",
-      onOptionClick: () => handlePublishCampaign(id),
+      label: "Publish template",
+      type: "publish",
     },
     {
-      label: "delete",
-      onOptionClick: () => handleDeleteResource(id),
+      type: "delete",
+      label: "Delete template",
     },
   ];
+
+  const handleResourceOptionsClick = (type: string) => {
+    if (type === "delete")
+      handleDeleteResource(id).then((res) => {
+        console.log(res);
+      });
+  };
 
   return (
     <div>
@@ -35,7 +45,11 @@ const ResourceHeader = ({ id, type, resource }: ResourceHeaderTypes) => {
           resourceId={id}
           classnames={["resource_title"]}
         />
-        <Ellipsis options={options} Icon={DotsHorizontalIcon} active={true} />
+        <Dropdown
+          options={options}
+          Icon={DotsHorizontalIcon}
+          onOptionClick={handleResourceOptionsClick}
+        />
       </span>
       <UpdatableField
         label="description"

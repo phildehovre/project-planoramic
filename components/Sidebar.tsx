@@ -9,6 +9,7 @@ import Link from "next/link";
 import Modal from "./Modal";
 import { create } from "@app/actions/templateActions";
 import SidebarSection from "./SidebarSection";
+import { redirect } from "next/navigation";
 
 const Sidebar = ({ data }: { data: SidebarTypes[] }) => {
   const [isShowing, setIsShowing] = useState(true);
@@ -23,8 +24,9 @@ const Sidebar = ({ data }: { data: SidebarTypes[] }) => {
   const handleCreateTemplate = async () => {
     if (user) {
       try {
-        await create(user.id, 1);
-        setDisplayModal("");
+        const res = await create(user.id, 1).then((res) => {
+          setDisplayModal("");
+        });
       } catch (err) {
         console.log(err);
       }

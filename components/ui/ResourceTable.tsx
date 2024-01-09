@@ -2,8 +2,17 @@
 import React, { useEffect, useState } from "react";
 import Row from "./Row";
 import styles from "./ResourceTable.module.scss";
-import { PlusIcon } from "@radix-ui/react-icons";
-import { createEvent } from "@app/actions/eventActions";
+import {
+  DotsHorizontalIcon,
+  DotsVerticalIcon,
+  PlusIcon,
+} from "@radix-ui/react-icons";
+import {
+  copyManyEventsToPhase,
+  createEvent,
+  deleteEvent,
+  deleteManyEvents,
+} from "@app/actions/eventActions";
 import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/dist/types";
 import classnames from "classnames";
 import DropdownMenuDemo from "./Dropdown";
@@ -77,6 +86,11 @@ const ResourceTable = ({ events, resource, user }: ResourceTableTypes) => {
     {
       label: "copy to",
       type: "copy",
+      submenu: {
+        label: "phase(s)",
+        type: "phase",
+        values: [...phases],
+      },
     },
     {
       label: "delete",
@@ -150,35 +164,36 @@ const Phase = ({
   phaseOptions,
 }: PhaseType) => {
   const handlePhaseOptionClick = (type: string) => {
-    console.log(type);
+    if (type === "duplicate") {
+      console.log("duplicate");
+    }
   };
-  const handleSelectedOptionClick = (type: string) => {
-    console.log(type);
+
+  const handleSelectedOptionClick = (type: any, phase: any) => {
+    if (type === "delete") {
+      deleteManyEvents(selectedRows);
+    }
+    if (type === "copy") {
+      copyManyEventsToPhase(selectedRows, phase);
+    }
+    if (type === "move") {
+      copyManyEventsToPhase(selectedRows, phase).then(() => {
+        deleteManyEvents(selectedRows);
+      });
+    }
   };
 
   return (
     <div>
       <span style={{ display: "flex", gap: "1em", alignItems: "center" }}>
         <h1>Phase {phaseNumber}</h1>
-        {/* <Ellipsis
+        <DropdownMenuDemo
           Icon={DotsHorizontalIcon}
           options={phaseOptions}
-          active={true}
           onOptionClick={handlePhaseOptionClick}
         />
-
-        <Ellipsis
+        <DropdownMenuDemo
           Icon={DotsVerticalIcon}
-          options={selectedEventsOptions}
-          onOptionClick={handleSelectedOptionClick}
-          active={rows.some((row) => selectedRows.includes(row.id))}
-          disabled={!rows.some((row) => selectedRows.includes(row.id))}
-        /> */}
-        <DropdownMenuDemo
-          options={phaseOptions}
-          onOptionsClick={handlePhaseOptionClick}
-        />
-        <DropdownMenuDemo
           options={selectedEventsOptions}
           onOptionClick={handleSelectedOptionClick}
         />

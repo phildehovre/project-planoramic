@@ -52,7 +52,7 @@ type OptionType = {
   label: string;
   url?: string;
   values?: any[];
-  submenu?: SubmenuType[];
+  submenu?: SubmenuType;
 };
 
 type SubmenuType = {
@@ -68,3 +68,15 @@ type DropdownOptionType = {
   active?: boolean;
   disabled?: boolean;
 };
+
+type InferValueFromColor<Color extends string> =
+  Color extends `${infer N}-${infer C}-${infer T}`
+    ? {
+        namespace: N;
+        color: C;
+        tone: T;
+      }
+    : never;
+
+type Example = InferValueFromColor<"text-green-300">;
+// type Example = { namespace: "text"; color: "green"; tone: "300" }

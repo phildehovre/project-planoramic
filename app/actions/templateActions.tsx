@@ -2,6 +2,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@utils/prisma";
 import { createEvent } from "./eventActions";
+import { redirect } from "next/navigation";
 
 export async function create(userId: string, phaseNumber: number) {
   const template = await prisma.template.create({
@@ -17,6 +18,7 @@ export async function create(userId: string, phaseNumber: number) {
   }
 
   revalidatePath("/");
+  redirect(`/dashboard/template/${template.id}`);
   return template;
 }
 

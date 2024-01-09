@@ -56,5 +56,28 @@ export const handlePublishPhase = async (phase: number | undefined) => {
 };
 
 export const handleDeleteResource = async (id: string) => {
-  console.log(id);
+  try {
+    await prisma.event
+      .deleteMany({
+        where: {
+          templateId: id,
+        },
+      })
+      .then(async () => {
+        await prisma.template.delete({
+          where: {
+            id: id,
+          },
+        });
+      });
+
+    revalidatePath("/");
+    // Handle success, if needed
+    // console.log("Update successful:", updatedResource);
+  } catch (error: any) {
+    // Handle errors here
+    console.error("Error updating field:", error.message);
+    // Optionally, rethrow the error if you want to propagate it further
+    throw error;
+  }
 };
