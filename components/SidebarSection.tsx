@@ -15,7 +15,6 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   type,
 }) => {
   if (!items) return;
-
   return (
     <div>
       <h1>{heading}</h1>

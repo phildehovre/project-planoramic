@@ -1,11 +1,11 @@
 // Modal.scss
 
-.modal_container {
-    position: fixed;
+.modal_overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
     background: rgba(0, 0, 0, 0.5); // semi-transparent overlay
     display: flex;
     justify-content: center;
@@ -13,13 +13,20 @@
     z-index: 1000;
   }
   
-  .modal_content {
+  .modal_container {
     background: #fff;
-    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1em;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
+
+  }
+  .modal_content {
+    min-width: 200px;
+    min-height: 200px;
     width: 100%;
+    height: 100%;
   }
   
   .modal_buttons {
@@ -34,18 +41,23 @@
       border-radius: 4px;
       font-size: 16px;
   
-      &:hover {
-        background: #eee;
+      
+      &.save_btn {
+        border: 1px solid #4caf50;
+        color: black;
+        &:hover {
+          background: #4caf50; // green
+          color: white;
+        }
       }
   
-      &.save-btn {
-        background: #4caf50; // green
-        color: #fff;
-      }
-  
-      &.cancel-btn {
-        background: #f44336; // red
-        color: #fff;
+      &.cancel_btn {
+        border: 1px solid #f44336; // red
+        color: black;
+        &:hover {
+          background: #f44336; // red
+          color: white;
+        }
       }
     }
   }

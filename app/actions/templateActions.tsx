@@ -4,10 +4,14 @@ import { prisma } from "@utils/prisma";
 import { createEvent } from "./eventActions";
 import { redirect } from "next/navigation";
 
-export async function create(userId: string, phaseNumber: number) {
+export async function createTemplate(
+  name: string,
+  userId: string,
+  phaseNumber: number
+) {
   const template = await prisma.template.create({
     data: {
-      name: "Untitled",
+      name: name || "Untitled",
       description: "",
       kinde_id: userId,
     },
@@ -19,7 +23,6 @@ export async function create(userId: string, phaseNumber: number) {
 
   revalidatePath("/");
   redirect(`/dashboard/template/${template.id}`);
-  return template;
 }
 
 export async function edit(formData: FormData) {
@@ -54,46 +57,6 @@ export async function update(formData: FormData, id: string) {
   revalidatePath("/");
 }
 
-export async function deleteTodo(formData: FormData) {
-  const inputId = formData.get("inputId") as string;
-
-  await prisma.template.delete({
-    where: {
-      id: inputId,
-    },
-  });
-
-  revalidatePath("/");
-}
-
-export async function todoStatus(formData: FormData) {
-  const inputId = formData.get("inputId") as string;
-  const template = await prisma.template.findUnique({
-    where: {
-      id: inputId,
-    },
-  });
-
-  if (!template) {
-    return;
-  }
-
-  //   const updatedStatus = !template.isCompleted;
-
-  await prisma.template.update({
-    where: {
-      id: inputId,
-    },
-    data: {
-      //   isCompleted: updatedStatus,
-    },
-  });
-
-  revalidatePath("/");
-
-  //   return updatedStatus;
-}
-
 export const updateField = async (id: any, key: any, val: any) => {
   try {
     const updatedResource = await prisma.template.update({
@@ -114,4 +77,33 @@ export const updateField = async (id: any, key: any, val: any) => {
     // Optionally, rethrow the error if you want to propagate it further
     throw error;
   }
+};
+export const test = async (string: string) => {
+  console.log(string);
+};
+
+export const publish = async (
+  userId: string,
+  name: string,
+  targetDate: any
+) => {
+  const ISOTargetDate = new Date(targetDate).toISOString();
+  const campaign = await prisma.campaign.create({
+    data: {
+      name: name || "Untitled",
+      description: "",
+      kinde_id: userId,
+      target_date: ISOTargetDate,
+    },
+  });
+
+  if (campaign) {
+    const event = await createEvent(campaign.id, userId);
+  }
+  if (campaign) {
+    const events = [];
+  }
+
+  revalidatePath("/");
+  redirect(`/dashboard/template/${campaign.id}`);
 };

@@ -18,15 +18,6 @@ export async function getTemplates(userId: string) {
   }
 }
 
-// export async function testGetTemplate() {
-//   let ressource = await prisma.template.findMany({
-//     where: {
-//       kinde_id: "kp_a9cf3f6366f141cc8537b36a7aec9d03",
-//     },
-//   });
-
-//   return ressource;
-// }
 export async function getUniqueTemplateByUser(id: any, user: any) {
   if (user) {
     let resource = await prisma.template.findUnique({

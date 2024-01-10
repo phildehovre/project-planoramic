@@ -92,13 +92,15 @@ function Field(props: {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isEditing]);
+  }, [isEditing, inputValue]);
 
-  // useEffect(() => {
-  //   if (inputValue !== value) {
-  //     handleOptimisticUpdate();
-  //   }
-  // }, [inputValue]);
+  // This ensure only Select fields
+  // are updated when the input changes
+  useEffect(() => {
+    if (type === "select" && inputValue !== value) {
+      handleOptimisticUpdate();
+    }
+  }, [inputValue, type]);
 
   const renderInput = () => {
     if (isEditing) {

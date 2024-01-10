@@ -4,12 +4,11 @@ import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import Image from "next/image";
 import React, { useState } from "react";
 import styles from "./Sidebar.module.scss";
-import { Infer } from "next/dist/compiled/superstruct";
-import Link from "next/link";
 import Modal from "./Modal";
-import { create } from "@app/actions/templateActions";
+import { createTemplate } from "@app/actions/templateActions";
 import SidebarSection from "./SidebarSection";
-import { redirect } from "next/navigation";
+import Form from "./ui/Form";
+import { createCampaign } from "@app/actions/campaignActions";
 
 const Sidebar = ({ data }: { data: SidebarTypes[] }) => {
   const [isShowing, setIsShowing] = useState(true);
@@ -21,14 +20,34 @@ const Sidebar = ({ data }: { data: SidebarTypes[] }) => {
     setIsExtended((prev) => (prev === heading ? "" : heading));
   };
 
-  const handleCreateTemplate = async () => {
-    if (user) {
-      try {
-        const res = await create(user.id, 1).then((res) => {
-          setDisplayModal("");
-        });
-      } catch (err) {
-        console.log(err);
+  const handleCreateResource = async (formData: FormData) => {
+    if (displayModal === "template") {
+      const name = formData.get("name") as string;
+      if (user) {
+        try {
+          const res = await createTemplate(name, user.id, 1).then((res) => {
+            setDisplayModal("");
+            console.log(res);
+          });
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    }
+    if (displayModal === "campaign") {
+      const name = formData.get("name") as string;
+      const targetDate = formData.get("targetDate");
+      if (user) {
+        try {
+          const res = await createCampaign(user.id, name, targetDate).then(
+            (res) => {
+              setDisplayModal("");
+              console.log(res);
+            }
+          );
+        } catch (err) {
+          console.log(err);
+        }
       }
     }
   };
@@ -71,13 +90,23 @@ const Sidebar = ({ data }: { data: SidebarTypes[] }) => {
       >
         {isShowing ? "<<" : ">>"}
       </div>
-      <Modal
-        onSave={handleCreateTemplate}
-        onCancel={() => setDisplayModal("")}
-        display={displayModal === "campaign" || displayModal === "template"}
-      >
-        Add {displayModal}
-      </Modal>
+      <Form action={handleCreateResource}>
+        <Modal
+          submit={<button type="submit">Create</button>}
+          onCancel={() => setDisplayModal("")}
+          display={displayModal === "campaign" || displayModal === "template"}
+        >
+          <h1>Create {displayModal}</h1>
+          <label htmlFor="name">Name</label>
+          <input type="text" name="name" id="name" />
+          {displayModal === "campaign" && (
+            <>
+              <label htmlFor="targetDate">Campaign Deadline: </label>
+              <input type="date" name="targetDate" id="targetDate" />
+            </>
+          )}
+        </Modal>
+      </Form>
     </>
   );
 };

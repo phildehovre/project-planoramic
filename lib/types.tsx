@@ -8,7 +8,8 @@ interface ResourceType {
 
 interface CampaignType extends ResourceType {
   generated_from: string;
-  templateId: string;
+  templateId?: string;
+  target_date: Date;
 }
 
 interface TemplateType extends ResourceType {

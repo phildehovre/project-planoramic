@@ -18,6 +18,18 @@ export async function getCampaigns(userId: string) {
   }
 }
 
+export async function getUniqueCampaignByUser(id: any, user: any) {
+  if (user) {
+    let resource = await prisma.campaign.findUnique({
+      where: {
+        id: id,
+        kinde_id: user.id,
+      },
+    });
+    return resource;
+  }
+}
+
 export async function getResourceForUserById(
   resourceType: string,
   user: User | KindeUser | null,

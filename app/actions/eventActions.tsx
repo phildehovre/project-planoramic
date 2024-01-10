@@ -5,7 +5,7 @@ import { prisma } from "@utils/prisma";
 export async function createEvent(
   templateId: string,
   userId: string,
-  phaseNumber: number
+  phaseNumber?: number
 ) {
   const event = await prisma.event.create({
     data: {
@@ -17,7 +17,7 @@ export async function createEvent(
       entity: "",
       range: 0,
       unit: "",
-      phase_number: phaseNumber,
+      phase_number: phaseNumber || 1,
     },
   });
 
@@ -26,7 +26,6 @@ export async function createEvent(
 }
 
 export async function edit(formData: FormData) {
-  const input = formData.get("newTitle") as string;
   const inputId = formData.get("inputId") as string;
 
   await prisma.event.update({
