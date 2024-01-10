@@ -43,37 +43,3 @@ export async function createUser(userData: any): Promise<CreateUserResult> {
 
   return { data: user, isLoading, error };
 }
-
-export async function createTemplate(
-  userId: string,
-  templateData?: ResourceType
-) {
-  let isLoading = true;
-  let error: any = null;
-  let data: any;
-
-  try {
-    if (!userId) {
-      error = new Error("No user id provided");
-      return;
-    }
-    const { name, description } = templateData || {
-      name: "New template",
-      description: "New template",
-    };
-    const template = await prisma.template.create({
-      data: {
-        name,
-        description,
-        kinde_id: userId,
-      },
-    });
-    data = template;
-  } catch (err: any) {
-    error = err;
-  } finally {
-    isLoading = false;
-  }
-  console.log(data, isLoading, error);
-  return { data, isLoading, error };
-}

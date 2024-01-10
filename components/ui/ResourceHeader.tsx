@@ -3,7 +3,6 @@
 import React from "react";
 import UpdatableField from "./UpdatableField";
 import { handleDeleteResource, handlePublishPhase } from "@app/actions/actions";
-import { handlePublishCampaign } from "@app/actions/campaignActions";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import Dropdown from "./Dropdown";
 import styles from "./ResourceHeader.module.scss";
@@ -12,16 +11,20 @@ import { dayjsFormat } from "@utils/helpers";
 import { publish } from "@app/actions/templateActions";
 import Form from "./Form";
 import Modal from "@components/Modal";
-import { test } from "@app/actions/templateActions";
 
 type ResourceHeaderTypes = {
-  id: string;
+  resourceId: string;
   type: "template" | "event" | "campaign";
   resource: CampaignType | TemplateType | EventType;
   events?: EventType[];
 };
 
-const ResourceHeader = ({ id, type, resource }: ResourceHeaderTypes) => {
+const ResourceHeader = ({
+  resourceId,
+  type,
+  resource,
+  events,
+}: ResourceHeaderTypes) => {
   const [displayModal, setDisplayModal] = React.useState("");
 
   const options = [
@@ -36,10 +39,7 @@ const ResourceHeader = ({ id, type, resource }: ResourceHeaderTypes) => {
   ];
 
   const handleResourceOptionsClick = (type: string) => {
-    if (type === "delete")
-      handleDeleteResource(id).then((res) => {
-        console.log(res);
-      });
+    if (type === "delete") handleDeleteResource(resourceId).then((res) => {});
     if (type === "publish") {
       setDisplayModal("publish");
     }
@@ -48,10 +48,12 @@ const ResourceHeader = ({ id, type, resource }: ResourceHeaderTypes) => {
   const handlePublishTemplate = async (formData: FormData) => {
     const name = formData.get("name") as string;
     const targetDate = formData.get("targetDate");
-    const res = await publish(id, name, targetDate).then((res) => {
-      console.log(res);
-    });
-
+    const res = await publish(
+      resource.kinde_id,
+      name,
+      targetDate,
+      events as any
+    );
     setDisplayModal("");
   };
 
@@ -63,7 +65,7 @@ const ResourceHeader = ({ id, type, resource }: ResourceHeaderTypes) => {
             label="name"
             value={resource?.name as string}
             resourceType={type}
-            resourceId={id}
+            resourceId={resourceId}
             classnames={["resource_title"]}
           />
           <Dropdown
@@ -72,9 +74,9 @@ const ResourceHeader = ({ id, type, resource }: ResourceHeaderTypes) => {
             onOptionClick={handleResourceOptionsClick}
           />
           <div className={styles.header_row_right}>
-            {type === "campaign" && (
+            {/* {type === "campaign" && (
               <h1>{dayjsFormat((resource as CampaignType).target_date)}</h1>
-            )}
+            )} */}
           </div>
         </div>
       </div>
@@ -82,7 +84,7 @@ const ResourceHeader = ({ id, type, resource }: ResourceHeaderTypes) => {
         label="description"
         value={resource?.description as string}
         resourceType={type}
-        resourceId={id}
+        resourceId={resourceId}
         weight="regular"
         classnames={["resource_description", "italic"]}
         placeholder={`${type} description`}

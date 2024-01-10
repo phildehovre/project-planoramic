@@ -7,7 +7,11 @@ import ResourceHeader from "@components/ui/ResourceHeader";
 import ResourceTable from "@components/ui/ResourceTable";
 import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/dist/types";
 import { redirect } from "next/navigation";
-import { getUniqueCampaignByUser } from "@hooks/campaigns";
+import {
+  getCampaignEvents,
+  getEventsByCampaignId,
+  getUniqueCampaignByUser,
+} from "@hooks/campaigns";
 
 const Page = async ({ params }: any) => {
   const { getUser } = getKindeServerSession();
@@ -17,22 +21,30 @@ const Page = async ({ params }: any) => {
     params.resource === "template"
       ? ((await getUniqueTemplateByUser(params.id, user)) as TemplateType)
       : ((await getUniqueCampaignByUser(params.id, user)) as CampaignType);
-  const events = (await getEventsByTemplateId(params.id, user)) as EventType[];
 
-  if (!resource) {
-    console.log("no resource, redirecting from resource/page.tsx...");
-    redirect("/dashboard");
-  }
+  const events =
+    params.resource === "template"
+      ? ((await getEventsByTemplateId(params.id, user)) as EventType[])
+      : ((await getEventsByCampaignId(params.id, user)) as EventType[]);
+
+  const res = await getCampaignEvents(params.id);
+
+  console.log(resource);
 
   return (
     <div>
       <ResourceHeader
-        id={params.id}
+        resourceId={params.id}
         type={params.resource}
         resource={resource}
         events={events}
       />
-      <ResourceTable events={events} resource={resource} user={user} />
+      <ResourceTable
+        events={events}
+        resource={resource}
+        user={user}
+        type={params.resource}
+      />
     </div>
   );
 };

@@ -3,24 +3,32 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@utils/prisma";
 
 export async function createEvent(
-  templateId: string,
+  type: string,
+  resource: ResourceType | TemplateType | CampaignType,
   userId: string,
   phaseNumber?: number
 ) {
+  const { templateId, campaignId } = resource as any;
+
+  const resourceIds = campaignId
+    ? { templateId, campaignId: resource.id }
+    : { templateId: null, campaignId: resource.id };
+  console.log(resource);
+
   const event = await prisma.event.create({
     data: {
+      ...resourceIds,
       name: "",
       description: "",
       kinde_id: userId,
-      templateId,
-      type: "event",
+      type: `${type}_event`,
       entity: "",
       range: 0,
       unit: "",
       phase_number: phaseNumber || 1,
     },
   });
-
+  console.log(event);
   revalidatePath("/");
   return event;
 }
@@ -141,7 +149,6 @@ export const handleUpdateField = async (
   val: string | number
 ) => {
   try {
-    console.log(key, val);
     const updatedResource = await prisma.event.update({
       where: {
         id: id,

@@ -12,10 +12,12 @@ const Dashboard = async ({ children }: { children: React.ReactNode }) => {
   const isLoggedIn = await isAuthenticated();
   let templates;
   let campaigns;
+
   if (user !== null) {
     templates = await getTemplates(user.id);
     campaigns = await getCampaigns(user.id);
   }
+
   if (!templates) {
     redirect("/dashboard");
   }

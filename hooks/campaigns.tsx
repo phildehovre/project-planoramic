@@ -40,7 +40,7 @@ export async function getResourceForUserById(
     ressource = await prisma.campaign.findUnique({
       where: {
         id: id,
-        userId: user?.id,
+        kinde_id: user?.id,
       },
     });
   }
@@ -49,7 +49,7 @@ export async function getResourceForUserById(
     ressource = await prisma.campaign.findUnique({
       where: {
         id: id,
-        userId: user?.id,
+        kinde_id: user?.id,
       },
     });
   }
@@ -61,3 +61,49 @@ export async function getResourceForUserById(
     throw new Error("Failed to fetch data for user: " + user?.given_name);
   }
 }
+
+export const getEventsByCampaignId = async (
+  id: string,
+  user: KindeUser | null
+) => {
+  if (!id || !user) return;
+  let isLoading = true;
+  let events;
+  let error;
+
+  try {
+    events = prisma.event.findMany({
+      where: {
+        campaignId: id,
+        kinde_id: user.id,
+      },
+    });
+
+    return events;
+  } catch (err: any) {
+    error = err;
+  }
+
+  return { isLoading, events, error };
+};
+
+export const getCampaignEvents = async (id: string) => {
+  if (!id) return;
+  let isLoading = true;
+  let events;
+  let error;
+
+  try {
+    events = prisma.event.findMany({
+      where: {
+        campaignId: id,
+      },
+    });
+
+    return events;
+  } catch (err: any) {
+    error = err;
+  }
+
+  return { isLoading, events, error };
+};

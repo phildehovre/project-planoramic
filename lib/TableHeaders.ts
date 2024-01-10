@@ -4,4 +4,5 @@ export const TableHeaders = [
     { label: "Unit", value: "unit" },
     { label: "Range", value: "range" },
     { label: "Entity", value: "entity" },
+    { label: "Date", value: "target_date"}
 ]

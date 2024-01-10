@@ -21,6 +21,7 @@ type ResourceTableTypes = {
   events: EventType[];
   resource: ResourceType;
   user: KindeUser;
+  type: string;
 };
 
 type PhaseType = {
@@ -33,7 +34,12 @@ type PhaseType = {
   phaseOptions: OptionType[];
 };
 
-const ResourceTable = ({ events, resource, user }: ResourceTableTypes) => {
+const ResourceTable = ({
+  events,
+  resource,
+  user,
+  type,
+}: ResourceTableTypes) => {
   const [phases, setPhases] = useState<(number | undefined)[]>([]);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
@@ -133,7 +139,7 @@ const ResourceTable = ({ events, resource, user }: ResourceTableTypes) => {
             />
             <button
               onClick={() =>
-                createEvent(resource.id, user.id, Number(phaseNumber))
+                createEvent(type, resource, user.id, Number(phaseNumber))
               }
               className={classnames("button", styles.add_phase_button)}
             >
@@ -143,7 +149,7 @@ const ResourceTable = ({ events, resource, user }: ResourceTableTypes) => {
         );
       })}
       <button
-        onClick={() => createEvent(resource.id, user.id, phases.length + 1)}
+        onClick={() => createEvent(type, resource, user.id, phases.length + 1)}
         className={classnames("button", styles.add_phase_btn)}
       >
         <PlusIcon />

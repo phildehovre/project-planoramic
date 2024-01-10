@@ -78,32 +78,43 @@ export const updateField = async (id: any, key: any, val: any) => {
     throw error;
   }
 };
-export const test = async (string: string) => {
-  console.log(string);
-};
 
 export const publish = async (
   userId: string,
   name: string,
-  targetDate: any
+  targetDate: any,
+  events: EventType[]
 ) => {
   const ISOTargetDate = new Date(targetDate).toISOString();
-  const campaign = await prisma.campaign.create({
-    data: {
-      name: name || "Untitled",
-      description: "",
-      kinde_id: userId,
-      target_date: ISOTargetDate,
-    },
-  });
 
-  if (campaign) {
-    const event = await createEvent(campaign.id, userId);
+  try {
+    const campaign = await prisma.campaign.create({
+      data: {
+        name: name || "Untitled",
+        description: "",
+        kinde_id: userId,
+        target_date: ISOTargetDate,
+      },
+    });
+    if (campaign) {
+      const formattedEvents = events.map((event) => {
+        const { id, ...rest } = event;
+        return {
+          ...rest,
+          campaignId: campaign.id,
+        };
+      });
+      const res = await prisma.event
+        .createMany({
+          data: formattedEvents as any,
+        })
+        .then(() => {
+          redirect(`/dashboard/campaign/${campaign.id}`);
+        });
+    }
+  } catch (err) {
+    console.log(err);
+  } finally {
+    revalidatePath("/");
   }
-  if (campaign) {
-    const events = [];
-  }
-
-  revalidatePath("/");
-  redirect(`/dashboard/template/${campaign.id}`);
 };
