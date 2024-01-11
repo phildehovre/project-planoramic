@@ -22,14 +22,15 @@ const Page = async ({ params }: any) => {
       ? ((await getUniqueTemplateByUser(params.id, user)) as TemplateType)
       : ((await getUniqueCampaignByUser(params.id, user)) as CampaignType);
 
-  const events =
+  const allEvents =
     params.resource === "template"
       ? ((await getEventsByTemplateId(params.id, user)) as EventType[])
       : ((await getEventsByCampaignId(params.id, user)) as EventType[]);
 
-  const res = await getCampaignEvents(params.id);
-
-  console.log(resource);
+  const events = allEvents.filter(
+    (event: EventType) => event.type === `${params.resource}_event`
+  );
+  console.log(events);
 
   return (
     <div>

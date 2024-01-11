@@ -10,6 +10,7 @@ export const updateField = async (
 ) => {
   try {
     let updatedResource;
+
     const queryParams = {
       where: {
         id: id,
@@ -22,11 +23,11 @@ export const updateField = async (
       case "template":
         updatedResource = await prisma.template.update(queryParams);
         break;
-      case "event":
-        updatedResource = await prisma.event.update(queryParams);
-        break;
       case "campaign":
         updatedResource = await prisma.campaign.update(queryParams);
+        break;
+      case "template_event" || "campaign_event":
+        updatedResource = await prisma.event.update(queryParams);
         break;
       default:
         break;

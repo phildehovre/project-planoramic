@@ -18,7 +18,7 @@ export async function createTemplate(
   });
 
   if (template) {
-    const event = await createEvent(template.id, userId, phaseNumber);
+    const event = await createEvent("template", template, userId, phaseNumber);
   }
 
   revalidatePath("/");
@@ -79,7 +79,7 @@ export const updateField = async (id: any, key: any, val: any) => {
   }
 };
 
-export const publish = async (
+export const publishTemplate = async (
   userId: string,
   name: string,
   targetDate: any,
@@ -102,15 +102,14 @@ export const publish = async (
         return {
           ...rest,
           campaignId: campaign.id,
+          type: "campaign_event",
         };
       });
-      const res = await prisma.event
-        .createMany({
-          data: formattedEvents as any,
-        })
-        .then(() => {
-          redirect(`/dashboard/campaign/${campaign.id}`);
-        });
+      const res = await prisma.event.createMany({
+        data: formattedEvents as any,
+      });
+
+      return campaign;
     }
   } catch (err) {
     console.log(err);

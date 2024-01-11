@@ -8,13 +8,14 @@ import Dropdown from "./Dropdown";
 import styles from "./ResourceHeader.module.scss";
 import dayjs from "dayjs";
 import { dayjsFormat } from "@utils/helpers";
-import { publish } from "@app/actions/templateActions";
+import { publishTemplate } from "@app/actions/templateActions";
 import Form from "./Form";
 import Modal from "@components/Modal";
+import { redirect } from "next/navigation";
 
 type ResourceHeaderTypes = {
   resourceId: string;
-  type: "template" | "event" | "campaign";
+  type: "template" | "campaign";
   resource: CampaignType | TemplateType | EventType;
   events?: EventType[];
 };
@@ -27,33 +28,55 @@ const ResourceHeader = ({
 }: ResourceHeaderTypes) => {
   const [displayModal, setDisplayModal] = React.useState("");
 
-  const options = [
+  const campaignOptions = [
     {
-      label: "Publish template",
-      type: "publish",
+      label: "Publish to Calendar",
+      type: "publish_campaign",
     },
     {
+      label: "Delete campaign",
       type: "delete",
+    },
+  ];
+  const templateOptions = [
+    {
+      label: "Publish as campaign",
+      type: "publish_template",
+    },
+    {
       label: "Delete template",
+      type: "delete",
     },
   ];
 
+  const options = type === "campaign" ? campaignOptions : templateOptions;
+
   const handleResourceOptionsClick = (type: string) => {
     if (type === "delete") handleDeleteResource(resourceId).then((res) => {});
-    if (type === "publish") {
-      setDisplayModal("publish");
+    if (type === "publish_template") {
+      setDisplayModal("publish_template");
+    }
+    if (type === "publish_campaign") {
+      setDisplayModal("publish_campaign");
     }
   };
 
   const handlePublishTemplate = async (formData: FormData) => {
     const name = formData.get("name") as string;
     const targetDate = formData.get("targetDate");
-    const res = await publish(
+    const res = await publishTemplate(
       resource.kinde_id,
       name,
       targetDate,
-      events as any
-    );
+      events as EventType[]
+    ).then((res: any) => {
+      redirect(`/campaign/${res.id}`);
+    });
+    setDisplayModal("");
+  };
+  const handlePublishCampaign = async (formData: FormData) => {
+    console.log("publishing campaign");
+
     setDisplayModal("");
   };
 
@@ -93,7 +116,7 @@ const ResourceHeader = ({
         <Modal
           submit={<button type="submit">Create</button>}
           onCancel={() => setDisplayModal("")}
-          display={displayModal === "publish"}
+          display={displayModal === "publish_template"}
         >
           <h1>Publish template as campaign</h1>
           <label htmlFor="name">Name</label>

@@ -10,10 +10,10 @@ export async function createEvent(
 ) {
   const { templateId, campaignId } = resource as any;
 
-  const resourceIds = campaignId
-    ? { templateId, campaignId: resource.id }
-    : { templateId: null, campaignId: resource.id };
-  console.log(resource);
+  const resourceIds =
+    type === "template"
+      ? { templateId: resource.id, campaignId: null }
+      : { templateId, campaignId: resource.id };
 
   const event = await prisma.event.create({
     data: {
@@ -28,7 +28,6 @@ export async function createEvent(
       phase_number: phaseNumber || 1,
     },
   });
-  console.log(event);
   revalidatePath("/");
   return event;
 }
