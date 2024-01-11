@@ -43,8 +43,6 @@ const ResourceTable = ({
   const [phases, setPhases] = useState<(number | undefined)[]>([]);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
-  useEffect(() => {}, [selectedRows]);
-
   useEffect(() => {
     const uniquePhases = Array.from(
       new Set(events.map((event) => event.phase_number).sort())

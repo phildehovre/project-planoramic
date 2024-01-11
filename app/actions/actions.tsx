@@ -26,7 +26,11 @@ export const updateField = async (
       case "campaign":
         updatedResource = await prisma.campaign.update(queryParams);
         break;
-      case "template_event" || "campaign_event":
+      case "template_event":
+        updatedResource = await prisma.event.update(queryParams);
+        break;
+      case "campaign_event":
+        console.log("correct");
         updatedResource = await prisma.event.update(queryParams);
         break;
       default:

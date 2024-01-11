@@ -70,7 +70,7 @@ const ResourceHeader = ({
       targetDate,
       events as EventType[]
     ).then((res: any) => {
-      redirect(`/campaign/${res.id}`);
+      redirect(`dashboard/campaign/${res.id}`);
     });
     setDisplayModal("");
   };
@@ -97,9 +97,9 @@ const ResourceHeader = ({
             onOptionClick={handleResourceOptionsClick}
           />
           <div className={styles.header_row_right}>
-            {/* {type === "campaign" && (
+            {type === "campaign" && (
               <h1>{dayjsFormat((resource as CampaignType).target_date)}</h1>
-            )} */}
+            )}
           </div>
         </div>
       </div>

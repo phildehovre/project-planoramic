@@ -12,6 +12,7 @@ import {
   getEventsByCampaignId,
   getUniqueCampaignByUser,
 } from "@hooks/campaigns";
+import { calculateDateWithOffset } from "@utils/helpers";
 
 const Page = async ({ params }: any) => {
   const { getUser } = getKindeServerSession();
@@ -22,16 +23,34 @@ const Page = async ({ params }: any) => {
       ? ((await getUniqueTemplateByUser(params.id, user)) as TemplateType)
       : ((await getUniqueCampaignByUser(params.id, user)) as CampaignType);
 
-  const allEvents =
+  const allEvents: any =
     params.resource === "template"
-      ? ((await getEventsByTemplateId(params.id, user)) as EventType[])
-      : ((await getEventsByCampaignId(params.id, user)) as EventType[]);
+      ? ((await getEventsByTemplateId(params.id, user)) as
+          | EventType[]
+          | undefined)
+      : ((await getEventsByCampaignId(params.id, user)) as
+          | EventType[]
+          | undefined);
 
-  const events = allEvents.filter(
-    (event: EventType) => event.type === `${params.resource}_event`
+  const campaignEvents = allEvents
+    .filter((event: EventType) => event.type === `campaign_event`)
+    .map((event: EventType) => {
+      return {
+        ...event,
+        date: calculateDateWithOffset(
+          // @ts-ignore
+          resource.target_date,
+          event.unit,
+          event.range
+        ),
+      } as EventType;
+    });
+
+  const templateEvents = allEvents.filter(
+    (event: EventType) => event.type === `template_event`
   );
-  console.log(events);
-
+  const events =
+    params.resource === "template" ? templateEvents : campaignEvents;
   return (
     <div>
       <ResourceHeader

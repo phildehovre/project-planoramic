@@ -3,26 +3,26 @@
 import React from "react";
 import UpdatableField from "./UpdatableField";
 import styles from "./Cell.module.scss";
-import { TableHeaders } from "@lib/TableHeaders";
+import { CampaignHeaders, TemplateHeaders } from "@lib/TableHeaders";
 
 type CellType = {
   value: any;
-  type: "template" | "campaign" | "event";
+  type: "template_event" | "campaign_event";
   id: string;
   label: string;
   isHeader: boolean;
 };
 
 const Cell = ({ value, type, id, label, isHeader }: CellType) => {
+  const headers = type === "template_event" ? TemplateHeaders : CampaignHeaders;
   // Check if label is in TableHeaders
   let headerArray: string[] = [];
-  TableHeaders.forEach((header) => {
+  headers.forEach((header) => {
     headerArray.push(header.value);
   });
   if (!headerArray.includes(label)) {
     return;
   }
-
   // ===================================
 
   const inputType = (() => {
@@ -33,10 +33,13 @@ const Cell = ({ value, type, id, label, isHeader }: CellType) => {
         return "select";
       case "unit":
         return "select";
+      case "date":
+        return "date";
       default:
         return "text";
     }
   })();
+
   return (
     <UpdatableField
       label={label}
