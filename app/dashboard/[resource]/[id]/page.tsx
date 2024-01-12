@@ -13,6 +13,7 @@ import {
   getUniqueCampaignByUser,
 } from "@hooks/campaigns";
 import { calculateDateWithOffset } from "@utils/helpers";
+import dayjs from "dayjs";
 
 const Page = async ({ params }: any) => {
   const { getUser } = getKindeServerSession();
@@ -37,15 +38,9 @@ const Page = async ({ params }: any) => {
     .map((event: EventType) => {
       return {
         ...event,
-        date: calculateDateWithOffset(
-          // @ts-ignore
-          resource.target_date,
-          event.unit,
-          event.range
-        ),
+        date: dayjs(event.date).format("ddd DD MMM YYYY"),
       } as EventType;
     });
-
   const templateEvents = allEvents.filter(
     (event: EventType) => event.type === `template_event`
   );

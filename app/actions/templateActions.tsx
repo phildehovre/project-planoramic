@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@utils/prisma";
 import { createEvent } from "./eventActions";
 import { redirect } from "next/navigation";
+import { calculateDateWithOffset } from "@utils/helpers";
 
 export async function createTemplate(
   name: string,
@@ -86,6 +87,7 @@ export const publishTemplate = async (
   events: EventType[]
 ) => {
   const ISOTargetDate = new Date(targetDate).toISOString();
+  console.log(ISOTargetDate);
 
   try {
     const campaign = await prisma.campaign.create({
@@ -103,6 +105,7 @@ export const publishTemplate = async (
           ...rest,
           campaignId: campaign.id,
           type: "campaign_event",
+          date: calculateDateWithOffset(targetDate, event.unit, event.range),
         };
       });
       const res = await prisma.event.createMany({

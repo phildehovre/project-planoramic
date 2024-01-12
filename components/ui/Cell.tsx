@@ -12,7 +12,6 @@ type CellType = {
   label: string;
   isHeader: boolean;
 };
-
 const Cell = ({ value, type, id, label, isHeader }: CellType) => {
   const headers = type === "template_event" ? TemplateHeaders : CampaignHeaders;
   // Check if label is in TableHeaders
@@ -39,7 +38,6 @@ const Cell = ({ value, type, id, label, isHeader }: CellType) => {
         return "text";
     }
   })();
-
   return (
     <UpdatableField
       label={label}

@@ -6,12 +6,12 @@ import { handleDeleteResource, handlePublishPhase } from "@app/actions/actions";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import Dropdown from "./Dropdown";
 import styles from "./ResourceHeader.module.scss";
-import dayjs from "dayjs";
-import { dayjsFormat } from "@utils/helpers";
 import { publishTemplate } from "@app/actions/templateActions";
 import Form from "./Form";
 import Modal from "@components/Modal";
 import { redirect } from "next/navigation";
+import { dayjsFormat } from "@utils/helpers";
+import TargetDate from "./TargetDate";
 
 type ResourceHeaderTypes = {
   resourceId: string;
@@ -48,15 +48,15 @@ const ResourceHeader = ({
       type: "delete",
     },
   ];
-
   const options = type === "campaign" ? campaignOptions : templateOptions;
 
-  const handleResourceOptionsClick = (type: string) => {
-    if (type === "delete") handleDeleteResource(resourceId).then((res) => {});
-    if (type === "publish_template") {
+  const handleResourceOptionsClick = (operation: string) => {
+    if (operation === "delete")
+      handleDeleteResource(type, resourceId).then((res) => {});
+    if (operation === "publish_template") {
       setDisplayModal("publish_template");
     }
-    if (type === "publish_campaign") {
+    if (operation === "publish_campaign") {
       setDisplayModal("publish_campaign");
     }
   };
@@ -70,16 +70,10 @@ const ResourceHeader = ({
       targetDate,
       events as EventType[]
     ).then((res: any) => {
-      redirect(`dashboard/campaign/${res.id}`);
+      redirect(`/dashboard/campaign/${res.id}`);
     });
     setDisplayModal("");
   };
-  const handlePublishCampaign = async (formData: FormData) => {
-    console.log("publishing campaign");
-
-    setDisplayModal("");
-  };
-
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: "1em" }}>
@@ -96,11 +90,11 @@ const ResourceHeader = ({
             Icon={DotsHorizontalIcon}
             onOptionClick={handleResourceOptionsClick}
           />
-          <div className={styles.header_row_right}>
-            {type === "campaign" && (
-              <h1>{dayjsFormat((resource as CampaignType).target_date)}</h1>
-            )}
-          </div>
+          <TargetDate
+            campaignId={resourceId}
+            display={type === "campaign"}
+            value={dayjsFormat((resource as CampaignType)?.target_date)}
+          />
         </div>
       </div>
       <UpdatableField

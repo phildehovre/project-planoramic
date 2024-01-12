@@ -39,8 +39,8 @@ export const calculateDateWithOffset = (targetDate: string, units: string | unde
         default:
             date = targetDate
     }
-}
-    return dayjs(date).format("ddd DD/MM/YYYY")
+} console.log("calculation")
+    return dayjs(date).toISOString()
 };
 
 // const date = new Date()

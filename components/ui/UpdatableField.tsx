@@ -8,7 +8,6 @@ import { useOptimistic } from "react";
 import Select from "./Select";
 import { entityOptions, unitOptions } from "@lib/SelectOptions";
 import { capitalize } from "@utils/helpers";
-import dayjs from "dayjs";
 
 function Field(props: {
   label: string;
@@ -75,22 +74,11 @@ function Field(props: {
 
   const handleOptimisticUpdate = async () => {
     if (inputValue !== value) {
-      let inputValueToConditionnalISOString;
       startTransition(() => {
-        if (label === "date" && inputValue) {
-          const dateObject = new Date(inputValue);
-          inputValueToConditionnalISOString = dateObject.toISOString();
-        } else {
-          inputValueToConditionnalISOString = inputValue;
-        }
-        setOptimisticValue(inputValueToConditionnalISOString);
+        setOptimisticValue(inputValue);
       });
-      await updateField(
-        resourceType,
-        resourceId,
-        label,
-        inputValueToConditionnalISOString
-      );
+
+      await updateField(resourceType, resourceId, label, inputValue);
     }
     setIsEditing(false);
   };

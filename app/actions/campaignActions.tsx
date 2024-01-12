@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@utils/prisma";
 import { createEvent } from "./eventActions";
 import { redirect } from "next/navigation";
+import { calculateDateWithOffset } from "@utils/helpers";
 
 export const handlePublishCampaign = async (id: string) => {
   console.log(id);
@@ -24,12 +25,53 @@ export const createCampaign = async (
   });
 
   if (campaign) {
-    const event = await createEvent(campaign.id, userId);
+    const event = await createEvent("campaign_event", campaign, userId);
   }
   if (campaign) {
-    const events = [];
   }
 
   revalidatePath("/");
-  redirect(`/dashboard/template/${campaign.id}`);
+  redirect(`/dashboard/campaign/${campaign.id}`);
+};
+
+export const updateTargetDate = async (id: string, targetDate: string) => {
+  const ISOTargetDate = new Date(targetDate).toISOString();
+
+  try {
+    const campaignEvents = await prisma.event.findMany({
+      where: {
+        campaignId: id,
+      },
+    });
+
+    for (let event of campaignEvents) {
+      const updatedEvent = await prisma.event.update({
+        where: {
+          id: event.id,
+        },
+        data: {
+          date: calculateDateWithOffset(
+            ISOTargetDate,
+            event.unit as string,
+            event.range as number
+          ),
+        },
+      });
+    }
+
+    const campaign = await prisma.campaign.update({
+      where: {
+        id: id,
+      },
+      data: {
+        target_date: ISOTargetDate,
+      },
+    });
+  } catch (error: any) {
+    console.error("Error updating field:", error.message);
+    throw error;
+  } finally {
+  }
+
+  revalidatePath("/");
 };

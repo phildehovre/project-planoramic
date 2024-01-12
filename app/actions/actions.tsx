@@ -1,6 +1,8 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@utils/prisma";
+import dayjs from "dayjs";
+import { redirect } from "next/navigation";
 
 export const updateField = async (
   type: string,
@@ -11,14 +13,17 @@ export const updateField = async (
   try {
     let updatedResource;
 
+    const conditionnalDateVal = key === "date" ? dayjs(val).toISOString() : val;
+
     const queryParams = {
       where: {
         id: id,
       },
       data: {
-        [key]: val,
+        [key]: conditionnalDateVal,
       },
     };
+
     switch (type) {
       case "template":
         updatedResource = await prisma.template.update(queryParams);
@@ -30,7 +35,6 @@ export const updateField = async (
         updatedResource = await prisma.event.update(queryParams);
         break;
       case "campaign_event":
-        console.log("correct");
         updatedResource = await prisma.event.update(queryParams);
         break;
       default:
@@ -60,23 +64,33 @@ export const handlePublishPhase = async (phase: number | undefined) => {
   console.log(phase);
 };
 
-export const handleDeleteResource = async (id: string) => {
+export const handleDeleteResource = async (type: string, id: string) => {
   try {
     await prisma.event
       .deleteMany({
         where: {
-          templateId: id,
+          [`${type}Id`]: id,
         },
       })
       .then(async () => {
-        await prisma.template.delete({
-          where: {
-            id: id,
-          },
-        });
+        if (type === "campaign") {
+          await prisma.campaign.delete({
+            where: {
+              id: id,
+            },
+          });
+        }
+        if (type === "template") {
+          await prisma.template.delete({
+            where: {
+              id: id,
+            },
+          });
+        }
       });
 
     revalidatePath("/");
+    redirect("/dashboard");
     // Handle success, if needed
     // console.log("Update successful:", updatedResource);
   } catch (error: any) {
