@@ -16,9 +16,8 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 }) => {
   if (!items) return;
   return (
-    <div>
-      <h1>{heading}</h1>
-      {/* {heading !== "settings" && <button onClick={create}></button>} */}
+    <div className={styles.sidebar_section}>
+      <h1 className={styles.sidebar_section_heading}>{heading}</h1>
       {heading !== "settings" ? (
         <ul className={styles.sidebar_section_list}>
           {items.map((item) => (

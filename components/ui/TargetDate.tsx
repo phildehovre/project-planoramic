@@ -16,11 +16,10 @@ const TargetDate = ({ display, value, campaignId }: TargetDateTypes) => {
   const [displayModal, setDisplayModal] = React.useState(false);
 
   const handleTargetDateChange = async (formData: FormData) => {
+    setDisplayModal(false);
     const input = formData.get("targetDate");
     await updateTargetDate(campaignId, input as string);
-    setDisplayModal(false);
   };
-
   return (
     <>
       <div

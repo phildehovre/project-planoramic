@@ -36,6 +36,7 @@ export const createCampaign = async (
 
 export const updateTargetDate = async (id: string, targetDate: string) => {
   const ISOTargetDate = new Date(targetDate).toISOString();
+  let isLoading = true;
 
   try {
     const campaignEvents = await prisma.event.findMany({
@@ -67,11 +68,15 @@ export const updateTargetDate = async (id: string, targetDate: string) => {
         target_date: ISOTargetDate,
       },
     });
+
+    // return campaign;
   } catch (error: any) {
     console.error("Error updating field:", error.message);
     throw error;
   } finally {
+    isLoading = false;
   }
 
   revalidatePath("/");
+  return isLoading;
 };
