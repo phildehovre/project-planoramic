@@ -10,6 +10,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.3.4",
     "@kinde-oss/kinde-auth-nextjs": "^2.0.13",
     "@prisma/client": "^5.7.1",
     "@radix-ui/react-checkbox": "^1.0.4",
@@ -22,8 +23,10 @@
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18",
+    "react-hook-form": "^7.49.3",
     "react-spinners": "^0.13.8",
-    "sass": "^1.69.5"
+    "sass": "^1.69.5",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "^20",

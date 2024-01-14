@@ -8,6 +8,7 @@ import { useOptimistic } from "react";
 import Select from "./Select";
 import { entityOptions, unitOptions } from "@lib/SelectOptions";
 import { capitalize } from "@utils/helpers";
+import { ArrowDownIcon, TriangleDownIcon } from "@radix-ui/react-icons";
 
 function Field(props: {
   label: string;
@@ -153,6 +154,7 @@ function Field(props: {
       >
         {label === "phase_number" && `Phase `}
         {capitalize(optimisticValue)}
+        {label === ("entity" || "unit") && !isHeader && <TriangleDownIcon />}
         {!optimisticValue && !value && placeholder && type !== "number" && (
           <span className="placeholder italic">{placeholder}...</span>
         )}

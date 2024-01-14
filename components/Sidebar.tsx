@@ -17,6 +17,7 @@ const Sidebar = ({ data }: { data: SidebarTypes[] }) => {
   const [isShowing, setIsShowing] = useState(true);
   const [isExtended, setIsExtended] = useState("");
   const [displayModal, setDisplayModal] = useState("");
+  const [formtargetDate, setFormTargetDate] = useState("");
   const { user } = useKindeBrowserClient();
 
   const handleHeadingClick = (heading: string) => {
@@ -117,7 +118,12 @@ const Sidebar = ({ data }: { data: SidebarTypes[] }) => {
           {displayModal === "campaign" && (
             <>
               <label htmlFor="targetDate">Campaign Deadline: </label>
-              <input type="date" name="targetDate" id="targetDate" />
+              <input
+                type="date"
+                name="targetDate"
+                id="targetDate"
+                onChange={(e) => setFormTargetDate(e.target.value)}
+              />
             </>
           )}
         </Modal>
