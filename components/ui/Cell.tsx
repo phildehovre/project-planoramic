@@ -14,6 +14,7 @@ type CellType = {
 };
 const Cell = ({ value, type, id, label, isHeader }: CellType) => {
   const headers = type === "template_event" ? TemplateHeaders : CampaignHeaders;
+  console.log(headers);
   // Check if label is in TableHeaders
   let headerArray: string[] = [];
   headers.forEach((header) => {
