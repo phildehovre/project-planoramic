@@ -14,11 +14,16 @@ import {
 } from "@hooks/campaigns";
 import { calculateDateWithOffset } from "@utils/helpers";
 import dayjs from "dayjs";
+import Spinner from "@components/Spinner";
 
 const Page = async ({ params }: any) => {
   const { getUser } = getKindeServerSession();
+  const { getIdToken } = getKindeServerSession();
+  const tokens = await getIdToken();
+  console.log(tokens);
 
   const user = (await getUser()) as KindeUser;
+  console.log(user);
   const resource =
     params.resource === "template"
       ? ((await getUniqueTemplateByUser(params.id, user)) as TemplateType)
@@ -46,6 +51,7 @@ const Page = async ({ params }: any) => {
   );
   const events =
     params.resource === "template" ? templateEvents : campaignEvents;
+
   return (
     <div>
       <ResourceHeader
@@ -54,12 +60,16 @@ const Page = async ({ params }: any) => {
         resource={resource}
         events={events}
       />
-      <ResourceTable
-        events={events}
-        resource={resource}
-        user={user}
-        type={params.resource}
-      />
+      {events && resource ? (
+        <ResourceTable
+          events={events}
+          resource={resource}
+          user={user}
+          type={params.resource}
+        />
+      ) : (
+        <Spinner loading={true} />
+      )}
     </div>
   );
 };
