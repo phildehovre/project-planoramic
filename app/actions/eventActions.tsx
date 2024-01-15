@@ -148,13 +148,17 @@ export const handleUpdateField = async (
   val: string | number
 ) => {
   try {
+    let data = { [key]: val };
+
+    console.log(key, val);
+    if (key === "date") {
+      console.log("update range!");
+    }
     const updatedResource = await prisma.event.update({
       where: {
         id: id,
       },
-      data: {
-        [key]: val,
-      },
+      data,
     });
 
     revalidatePath("/");

@@ -7,7 +7,7 @@ import {
 const Login = () => {
   return (
     <div>
-      <LoginLink>Sign in</LoginLink>
+      <LoginLink postLoginRedirectURL="/dashboard">Sign in</LoginLink>
       <RegisterLink>Sign up</RegisterLink>
     </div>
   );
