@@ -1,14 +1,14 @@
 import dayjs from "dayjs";
 import { backOff } from "exponential-backoff";
 
-export async function deleteCalendarEvent(id: string, session: any) {
+export async function deleteCalendarEvent(id: string, token: any) {
   try {
     await fetch(
       `https://www.googleapis.com/calendar/v3/calendars/primary/events/${id}`,
       {
         method: "DELETE",
         headers: {
-          Authorization: "Bearer " + session.provider_token,
+          Authorization: "Bearer " + token,
         },
       }
     ).then((data) => {
@@ -19,12 +19,12 @@ export async function deleteCalendarEvent(id: string, session: any) {
   }
 }
 
-export const deleteCalendarEvents = async (events: [], session: any) => {
+export const deleteCalendarEvents = async (events: [], token: any) => {
   let idArray = events.map((e: { event_id: string }) => {
     return e.event_id;
   });
   for (let i = 0; i < events.length; i++) {
-    await deleteCalendarEvent(idArray[i], session);
+    await deleteCalendarEvent(idArray[i], token);
   }
 };
 
@@ -40,8 +40,8 @@ export async function formatAndUpdateEvent(
   },
   targetDate: Date,
 
-  // ===== PASS THE USER SESSION AS SECOND PARAMETER:
-  session: any
+  // ===== PASS THE USER TOKEN AS SECOND PARAMETER:
+  token: any
 ) {
   const { category, description, position, type, event_id } = eventObj;
 
@@ -68,7 +68,7 @@ export async function formatAndUpdateEvent(
       {
         method: "PUT",
         headers: {
-          Authorization: "Bearer " + session.provider_token,
+          Authorization: "Bearer " + token.provider_token,
         },
         body: JSON.stringify(event),
       }
@@ -80,7 +80,7 @@ export async function formatAndUpdateEvent(
   }
 }
 
-const fetchHolidays = async (region: string, session: any) => {
+const fetchHolidays = async (region: string, token: any) => {
   const BASE_CALENDAR_ID_FOR_PUBLIC_HOLIDAYS =
     "holiday@group.v.calendar.google.com";
   const CALENDAR_REGION = region;
@@ -90,7 +90,7 @@ const fetchHolidays = async (region: string, session: any) => {
       {
         method: "GET",
         headers: {
-          Authorization: "Bearer " + session.provider_token,
+          Authorization: "Bearer " + token.provider_token,
         },
       }
     );
@@ -103,12 +103,12 @@ const fetchHolidays = async (region: string, session: any) => {
 export async function postEventsToGoogle(
   events: any[],
   // targetDate: Date,
-  session: any
+  token: string
 ) {
   for (let i = 0; i < events.length; i++) {
     try {
       const response = await backOff(() =>
-        formatAndPostEvent(events[i], events[i].position, session)
+        formatAndPostEvent(events[i], token)
       );
       return response;
     } catch (e) {
@@ -117,29 +117,17 @@ export async function postEventsToGoogle(
   }
 }
 
-async function formatAndPostEvent(
-  eventObj: {
-    category: string;
-    completed: boolean;
-    description: string;
-    position: number;
-    id: string;
-    type: string;
-    event_id: string;
-  },
-  targetDate: Date,
-  session: any
-) {
-  const { category, description, type, event_id } = eventObj;
+async function formatAndPostEvent(eventObj: EventType, token: string) {
+  const { entity, description, id, date } = eventObj;
 
-  const start = dayjs(targetDate).toISOString();
-  const end = dayjs(targetDate).add(1, "hour").toISOString();
+  const start = dayjs(date).toISOString();
+  const end = dayjs(date).add(1, "hour").toISOString();
 
-  console.log(targetDate, typeof targetDate);
+  console.log(date, typeof date);
 
   const event = {
     summary: description,
-    description: `${category} / ${type}`,
+    description: `${entity} - ${description}`,
     start: {
       dateTime: start,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -148,7 +136,7 @@ async function formatAndPostEvent(
       dateTime: end,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     },
-    id: event_id,
+    id: id,
   };
 
   try {
@@ -157,7 +145,7 @@ async function formatAndPostEvent(
       {
         method: "POST",
         headers: {
-          Authorization: "Bearer " + session.provider_token,
+          Authorization: "Bearer " + token,
         },
         body: JSON.stringify(event),
       }
