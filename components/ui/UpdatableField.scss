@@ -4,14 +4,20 @@
     font-size: 2em;
 }
 
+.active {
+    & > input {
+        font-weight: inherit;
+        padding: inherit;
+        font-size: inherit;
+        padding: .2em;
+        outline: 1px solid lightgrey;
+    }
+}
+
 .resource_description {
     padding: 1em 0;
 }
 
-.active {
-    z-index: 1;
-    outline: 2px dodgerblue solid;
-}
 
 .placeholder {
     color: rgba(128, 128, 128, 0.651)

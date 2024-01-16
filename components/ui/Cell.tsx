@@ -43,7 +43,7 @@ const Cell = ({ value, type, id, label, isHeader }: CellType) => {
   const formattedValue = (() => {
     switch (label) {
       case "unit":
-        return value ? capitalize(value.split("_").join(" ")) : "Select";
+        return value ? capitalize(value.split("_").join(" ")) : "";
       default:
         return value;
     }
