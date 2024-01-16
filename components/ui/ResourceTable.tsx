@@ -16,6 +16,7 @@ import {
 import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/dist/types";
 import classnames from "classnames";
 import DropdownMenuDemo from "./Dropdown";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
 type ResourceTableTypes = {
   events: EventType[];

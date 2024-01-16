@@ -1,3 +1,4 @@
+import { KindeAccessToken } from "@kinde-oss/kinde-auth-nextjs/dist/types";
 import dayjs from "dayjs";
 import { backOff } from "exponential-backoff";
 
@@ -100,15 +101,15 @@ const fetchHolidays = async (region: string, token: any) => {
   }
 };
 
-export async function postEventsToGoogle(
+export async function postManyEventsToGoogle(
   events: any[],
   // targetDate: Date,
-  token: string
+  token: KindeAccessToken | undefined
 ) {
   for (let i = 0; i < events.length; i++) {
     try {
       const response = await backOff(() =>
-        formatAndPostEvent(events[i], token)
+        formatAndPostUniqueEvent(events[i], token)
       );
       return response;
     } catch (e) {
@@ -117,13 +118,23 @@ export async function postEventsToGoogle(
   }
 }
 
-async function formatAndPostEvent(eventObj: EventType, token: string) {
+export async function formatAndPostUniqueEvent(
+  eventObj: EventType,
+  token: KindeAccessToken | undefined
+) {
   const { entity, description, id, date } = eventObj;
+
+  if (!token || !eventObj) {
+    console.log(
+      "missing token or eventObj in function formatAndPostUniqueEvent"
+    );
+    return;
+  }
 
   const start = dayjs(date).toISOString();
   const end = dayjs(date).add(1, "hour").toISOString();
 
-  console.log(date, typeof date);
+  // console.log(date, token);
 
   const event = {
     summary: description,

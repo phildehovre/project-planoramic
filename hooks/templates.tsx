@@ -78,6 +78,9 @@ export const getEventsByTemplateId = async (
       where: {
         templateId: id,
       },
+      orderBy: {
+        range: "asc", // or 'desc' for descending order
+      },
     });
 
     return events;

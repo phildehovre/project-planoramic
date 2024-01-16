@@ -77,6 +77,9 @@ export const getEventsByCampaignId = async (
         campaignId: id,
         kinde_id: user.id,
       },
+      orderBy: {
+        date: "asc", // or 'desc' for descending order
+      },
     });
 
     return events;

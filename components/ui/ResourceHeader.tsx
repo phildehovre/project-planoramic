@@ -12,6 +12,9 @@ import Modal from "@components/Modal";
 import { redirect } from "next/navigation";
 import { dayjsFormat } from "@utils/helpers";
 import TargetDate from "./TargetDate";
+import { formatAndPostUniqueEvent } from "@app/actions/calendar";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { KindeAccessToken } from "@kinde-oss/kinde-auth-nextjs/dist/types";
 
 type ResourceHeaderTypes = {
   resourceId: string;
@@ -27,6 +30,9 @@ const ResourceHeader = ({
   events,
 }: ResourceHeaderTypes) => {
   const [displayModal, setDisplayModal] = React.useState("");
+
+  const { getAccessToken } = useKindeBrowserClient();
+  const token = getAccessToken();
 
   const campaignOptions = [
     {
@@ -74,6 +80,16 @@ const ResourceHeader = ({
     });
     setDisplayModal("");
   };
+
+  const handlePublishCampaign = async () => {
+    events &&
+      formatAndPostUniqueEvent(events[0], token as KindeAccessToken).then(
+        (res) => {
+          console.log(res);
+        }
+      );
+  };
+
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: "1em" }}>
@@ -119,6 +135,31 @@ const ResourceHeader = ({
           <input type="date" name="targetDate" id="targetDate" />
         </Modal>
       </Form>
+      <Modal
+        onCancel={() => setDisplayModal("")}
+        onSave={() => handlePublishCampaign()}
+        display={displayModal === "publish_campaign"}
+      >
+        <h1>Publish template as campaign</h1>
+        <p>The following events will be pushed to Google calendar:</p>
+        {events?.map((event) => {
+          return (
+            <div
+              key={event.id}
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: ".2em",
+              }}
+            >
+              <h4>{event.name}</h4>
+              <p>{event.description}</p>
+              <p>{event.date}</p>
+            </div>
+          );
+        })}
+      </Modal>
     </div>
   );
 };

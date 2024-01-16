@@ -8,8 +8,13 @@ export const updateField = async (
   type: string,
   id: any,
   key: any,
-  val: any
+  val: any,
+  path?: string | undefined
 ) => {
+  console.log(type, id, key, val);
+
+  const isPath = path || "/dashboard";
+
   try {
     let updatedResource;
 
@@ -41,7 +46,7 @@ export const updateField = async (
         break;
     }
 
-    revalidatePath("/");
+    revalidatePath(isPath);
     // Handle success, if needed
     // console.log("Update successful:", updatedResource);
   } catch (error: any) {

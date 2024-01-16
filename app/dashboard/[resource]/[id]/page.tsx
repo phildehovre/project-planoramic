@@ -6,24 +6,19 @@ import {
 import ResourceHeader from "@components/ui/ResourceHeader";
 import ResourceTable from "@components/ui/ResourceTable";
 import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/dist/types";
-import { redirect } from "next/navigation";
 import {
-  getCampaignEvents,
   getEventsByCampaignId,
   getUniqueCampaignByUser,
 } from "@hooks/campaigns";
-import { calculateDateWithOffset } from "@utils/helpers";
 import dayjs from "dayjs";
 import Spinner from "@components/Spinner";
+import { checkForPhaseOverlap } from "@utils/helpers";
 
 const Page = async ({ params }: any) => {
   const { getUser } = getKindeServerSession();
-  const { getIdToken } = getKindeServerSession();
-  const tokens = await getIdToken();
-  // console.log(tokens);
-
+  // const session = getKindeServerSession();
   const user = (await getUser()) as KindeUser;
-  // console.log(user);
+
   const resource =
     params.resource === "template"
       ? ((await getUniqueTemplateByUser(params.id, user)) as TemplateType)
@@ -46,6 +41,8 @@ const Page = async ({ params }: any) => {
         date: dayjs(event.date).format("ddd DD MMM YYYY"),
       } as EventType;
     });
+
+  console.log(checkForPhaseOverlap(campaignEvents));
   const templateEvents = allEvents.filter(
     (event: EventType) => event.type === `template_event`
   );

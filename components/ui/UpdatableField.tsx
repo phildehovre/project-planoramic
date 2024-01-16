@@ -1,6 +1,6 @@
 "use client";
 
-import React, { startTransition, useEffect, useRef } from "react";
+import React, { startTransition, use, useEffect, useRef } from "react";
 import "./UpdatableField.scss";
 import { updateField } from "@app/actions/actions";
 import Form from "./Form";
@@ -9,6 +9,7 @@ import Select from "./Select";
 import { entityOptions, unitOptions } from "@lib/SelectOptions";
 import { capitalize } from "@utils/helpers";
 import { ArrowDownIcon, TriangleDownIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
 
 function Field(props: {
   label: string;
@@ -74,12 +75,13 @@ function Field(props: {
   };
 
   const handleOptimisticUpdate = async () => {
+    const path = window.location.pathname;
     if (inputValue !== value) {
       startTransition(() => {
         setOptimisticValue(inputValue);
       });
 
-      await updateField(resourceType, resourceId, label, inputValue);
+      await updateField(resourceType, resourceId, label, inputValue, path);
     }
     setIsEditing(false);
   };

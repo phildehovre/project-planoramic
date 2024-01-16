@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import UpdatableField from "./UpdatableField";
 import styles from "./Cell.module.scss";
 import { CampaignHeaders, TemplateHeaders } from "@lib/TableHeaders";
+import { capitalize } from "@utils/helpers";
 
 type CellType = {
   value: any;
@@ -38,10 +39,20 @@ const Cell = ({ value, type, id, label, isHeader }: CellType) => {
         return "text";
     }
   })();
+
+  const formattedValue = (() => {
+    switch (label) {
+      case "unit":
+        return value ? capitalize(value.split("_").join(" ")) : "Select";
+      default:
+        return value;
+    }
+  })();
+
   return (
     <UpdatableField
       label={label}
-      value={value}
+      value={formattedValue}
       resourceType={type}
       resourceId={id}
       classnames={[styles.cell_ctn, styles[label]]}

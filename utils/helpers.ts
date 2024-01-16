@@ -65,3 +65,19 @@ export const calculateOffsetFromDate = (targetDate: string, datePicked: string) 
 export const dayjsFormat = (date: Date) => {
     return dayjs(date).format("ddd DD/MM/YYYY")
 }
+
+
+export const checkForPhaseOverlap = (events: EventType[]) => {
+    let eventsByPhase = events.reduce((acc: (EventType[])[], event: EventType) => {
+        if (acc.length !== event.phase_number) {
+            acc.push([event])
+        }
+        if (acc.length === event.phase_number) {
+            acc[event.phase_number - 1].push(event)
+        }
+        return acc
+    }, []);
+
+    
+
+}
