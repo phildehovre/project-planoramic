@@ -1,7 +1,9 @@
-.resource_title {
-    font-weight: bold;
-    padding: 1em 0;
-    font-size: 2em;
+.passive{
+    color: inherit;
+    transition: 150ms ease-in-out all;
+    &:hover {
+        font-weight: bold;
+    }
 }
 
 .active {
@@ -13,11 +15,6 @@
         outline: 1px solid lightgrey;
     }
 }
-
-.resource_description {
-    padding: 1em 0;
-}
-
 
 .placeholder {
     color: rgba(128, 128, 128, 0.651)

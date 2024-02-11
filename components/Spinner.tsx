@@ -1,7 +1,7 @@
 // components/Spinner.js
 import React, { CSSProperties } from "react";
 import { ClipLoader } from "react-spinners";
-import "./Spinner.scss";
+import styles from "./Spinner.module.scss";
 
 const override: CSSProperties = {
   display: "block",
@@ -15,7 +15,7 @@ const Spinner = ({ loading }: { loading: boolean }) => {
       loading={loading}
       cssOverride={override}
       size={150}
-      className="spinner"
+      className={styles.spinner}
     />
   );
 };

@@ -1,11 +1,9 @@
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import {
   getEventsByTemplateId,
   getUniqueTemplateByUser,
 } from "@hooks/templates";
 import ResourceHeader from "@components/ui/ResourceHeader";
 import ResourceTable from "@components/ui/ResourceTable";
-import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/dist/types";
 import {
   getEventsByCampaignId,
   getUniqueCampaignByUser,
@@ -13,11 +11,19 @@ import {
 import dayjs from "dayjs";
 import Spinner from "@components/Spinner";
 import { checkForPhaseOverlap } from "@utils/helpers";
+import { auth, currentUser } from "@clerk/nextjs";
 
 const Page = async ({ params }: any) => {
-  const { getUser } = getKindeServerSession();
-  // const session = getKindeServerSession();
-  const user = (await getUser()) as KindeUser;
+  const authUser = await currentUser();
+
+  const user = {
+    id: authUser?.id,
+    clerk_id: authUser?.id,
+    email: authUser?.emailAddresses[0]?.emailAddress,
+    firstname: authUser?.firstName,
+    lastname: authUser?.lastName,
+    name: "",
+  };
 
   const resource =
     params.resource === "template"
@@ -42,7 +48,6 @@ const Page = async ({ params }: any) => {
       } as EventType;
     });
 
-  console.log(checkForPhaseOverlap(campaignEvents));
   const templateEvents = allEvents.filter(
     (event: EventType) => event.type === `template_event`
   );

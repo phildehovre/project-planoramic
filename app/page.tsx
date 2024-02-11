@@ -1,15 +1,9 @@
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { redirect } from "next/navigation";
+import { auth, currentUser } from "@clerk/nextjs";
 import React from "react";
 
 const Page = async () => {
-  const { isAuthenticated } = getKindeServerSession();
-
-  const isLoggedIn = await isAuthenticated();
-
-  if (!isLoggedIn) {
-    redirect("/api/auth/login");
-  }
+  // const authUser = await currentUser();
+  const { user } = auth();
 
   return <div>Page</div>;
 };

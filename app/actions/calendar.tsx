@@ -1,6 +1,37 @@
-import { KindeAccessToken } from "@kinde-oss/kinde-auth-nextjs/dist/types";
+"use server";
+
+import { auth } from "@clerk/nextjs";
 import dayjs from "dayjs";
 import { backOff } from "exponential-backoff";
+
+export const fetchAccessToken = async (userId: string | null) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/google/users/${userId}/oauth_access_tokens/oauth_google`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          // Add any other headers if needed
+        },
+        // You can add credentials: 'include' if you need to send cookies or auth headers
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      // Assuming the response contains the access token
+      console.log("From fetch at calendar.ts, DATA: ", data);
+      return data;
+    } else {
+      // Handle error responses
+      console.log(response);
+      console.error("Failed to fetch access token");
+    }
+  } catch (error) {
+    console.error("Error fetching access token:", error);
+  }
+};
 
 export async function deleteCalendarEvent(id: string, token: any) {
   try {
@@ -9,7 +40,7 @@ export async function deleteCalendarEvent(id: string, token: any) {
       {
         method: "DELETE",
         headers: {
-          Authorization: "Bearer " + token,
+          Authorization: "Bearer " + process.env.CLERK_SECRET_KEY,
         },
       }
     ).then((data) => {
@@ -104,8 +135,12 @@ const fetchHolidays = async (region: string, token: any) => {
 export async function postManyEventsToGoogle(
   events: any[],
   // targetDate: Date,
-  token: KindeAccessToken | undefined
+  userId
 ) {
+  const token = await fetchAccessToken(userId);
+  console.log("TOKEN: ", token);
+  if (!token) return;
+  console.log("postManyEventsToGoogle", userId, token);
   for (let i = 0; i < events.length; i++) {
     try {
       const response = await backOff(() =>
@@ -120,13 +155,17 @@ export async function postManyEventsToGoogle(
 
 export async function formatAndPostUniqueEvent(
   eventObj: EventType,
-  token: KindeAccessToken | undefined
+  token: string
 ) {
   const { entity, description, id, date } = eventObj;
 
   if (!token || !eventObj) {
     console.log(
-      "missing token or eventObj in function formatAndPostUniqueEvent"
+      "missing token or eventObj in function formatAndPostUniqueEvent",
+      "obj: ",
+      eventObj,
+      "token: ",
+      token
     );
     return;
   }
@@ -161,7 +200,7 @@ export async function formatAndPostUniqueEvent(
         body: JSON.stringify(event),
       }
     ).then((res) => {
-      //   console.log(res);
+      console.log("POST UNIQUE RESPONSE: ", res);
       return res.json();
     });
   } catch (error) {

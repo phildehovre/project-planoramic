@@ -1,7 +1,9 @@
-import React from "react";
+"use client";
 
-const page = () => {
-  return <div>page</div>;
+import React, { useEffect } from "react";
+
+const Dashboard = () => {
+  return <div>Dashboard is under construction</div>;
 };
 
-export default page;
+export default Dashboard;

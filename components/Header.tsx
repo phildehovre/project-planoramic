@@ -1,24 +1,19 @@
-import {
-  LoginLink,
-  LogoutLink,
-  RegisterLink,
-} from "@kinde-oss/kinde-auth-nextjs/components";
+"use client";
+
 import Link from "next/link";
 import React from "react";
 import Styles from "./Header.module.scss";
 import Image from "next/image";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { createUser } from "@hooks/db";
+import { SignInButton, UserButton, currentUser, useUser } from "@clerk/nextjs";
 
-const Header = async () => {
-  const { isAuthenticated, getUser } = getKindeServerSession();
-  const isLoggedIn = await isAuthenticated();
+const Header = () => {
+  const isLoggedin = false;
+  const { user, isSignedIn } = useUser();
 
-  const userData = await getUser();
-
-  if (isLoggedIn) {
-    const { data, error } = await createUser(userData);
-  }
+  // if (isSignedIn) {
+  //   const { data, error } = await createUser(user);
+  // }
 
   const dropDownOptions = [
     {
@@ -34,8 +29,10 @@ const Header = async () => {
   ];
 
   return (
-    <header className={Styles.nav_ctn}>
-      <nav className={`${Styles.nav} w-full flex justify-evenly`}>
+    <header className={`${Styles.nav_ctn} w-full `}>
+      <nav
+        className={`${Styles.nav} sm:hidden md:w-1/2 lg:w-2/3 flex justify-evenly`}
+      >
         <Image
           src="/seanjacksonband-logo.svg"
           alt="logo"
@@ -48,28 +45,18 @@ const Header = async () => {
         <Link className={Styles.nav_link} href="about">
           About
         </Link>
-        <Link className={Styles.nav_link} href="/Contact">
+        <Link className={Styles.nav_link} href="/contact">
           Contact
         </Link>
-
-        {isLoggedIn ? (
+        {isSignedIn ? (
           <>
             <Link className={Styles.nav_link} href="/dashboard">
               Dashboard
             </Link>
-            <Image
-              src={userData?.picture || ""}
-              alt="User profile picture"
-              width={30}
-              height={30}
-            />
-            <LogoutLink className="button">Log out</LogoutLink>
+            <UserButton />
           </>
         ) : (
-          <>
-            <LoginLink className="button black">Sign in</LoginLink>
-            <RegisterLink className="button">Sign up</RegisterLink>
-          </>
+          <SignInButton />
         )}
       </nav>
     </header>

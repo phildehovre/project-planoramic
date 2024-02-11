@@ -1,16 +1,7 @@
 import React from "react";
-import {
-  RegisterLink,
-  LoginLink,
-} from "@kinde-oss/kinde-auth-nextjs/components";
 
 const Login = () => {
-  return (
-    <div>
-      <LoginLink postLoginRedirectURL="/dashboard">Sign in</LoginLink>
-      <RegisterLink>Sign up</RegisterLink>
-    </div>
-  );
+  return <div>Login</div>;
 };
 
 export default Login;

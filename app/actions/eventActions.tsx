@@ -20,7 +20,7 @@ export async function createEvent(
       ...resourceIds,
       name: "",
       description: "",
-      kinde_id: userId,
+      clerk_id: userId,
       type: `${type}_event`,
       entity: "",
       range: 0,
@@ -28,7 +28,7 @@ export async function createEvent(
       phase_number: phaseNumber || 1,
     },
   });
-  revalidatePath("/");
+  revalidatePath(`/dashboard/${type}/${resource.id}`);
   return event;
 }
 

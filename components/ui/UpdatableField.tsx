@@ -9,6 +9,7 @@ import Select from "./Select";
 import { entityOptions, unitOptions } from "@lib/SelectOptions";
 import { capitalize } from "@utils/helpers";
 import { ArrowDownIcon, TriangleDownIcon } from "@radix-ui/react-icons";
+import classnames from "classnames";
 
 function Field(props: {
   label: string;
@@ -21,7 +22,7 @@ function Field(props: {
   onClick?: () => void;
   children?: React.ReactNode;
   placeholder?: string;
-  classnames?: string[];
+  classNames?: string;
   isHeader?: boolean;
 }) {
   const {
@@ -31,7 +32,7 @@ function Field(props: {
     resourceId,
     inputType,
     placeholder,
-    classnames,
+    classNames,
     resourceType,
     isHeader,
   } = props;
@@ -48,10 +49,10 @@ function Field(props: {
   );
 
   const conditionalClassnames =
-    isEditing && classnames
-      ? [...classnames, "active"]
-      : classnames
-      ? [...classnames, "passive"]
+    isEditing && classNames
+      ? [classNames, "active"]
+      : classNames
+      ? [classNames, "passive"]
       : ["passive"];
 
   useEffect(() => {
@@ -110,7 +111,7 @@ function Field(props: {
           action={() => {
             handleOptimisticUpdate();
           }}
-          className={conditionalClassnames?.join(" ")}
+          className={classnames(conditionalClassnames)}
         >
           {type === "select" && (
             <Select

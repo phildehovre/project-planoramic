@@ -3,7 +3,7 @@ interface ResourceType {
   name: string;
   description: string;
   userId: string | null;
-  kinde_id: string;
+  clerk_id: string;
 }
 
 interface CampaignType extends ResourceType {
@@ -29,9 +29,10 @@ interface EventType extends ResourceType {
 
 interface User {
   id: string;
+  clerk_id: string;
   email: string;
-  family_name?: string | null;
-  given_name?: string | null;
+  firstname: string | null;
+  lastname: string | null;
   name?: string | null;
   Templates?: TemplateType[];
   Campaigns?: CampaignType[];

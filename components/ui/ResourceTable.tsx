@@ -10,18 +10,18 @@ import {
 import {
   copyManyEventsToPhase,
   createEvent,
-  deleteEvent,
   deleteManyEvents,
 } from "@app/actions/eventActions";
 import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/dist/types";
 import classnames from "classnames";
 import DropdownMenuDemo from "./Dropdown";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import AddButton from "./AddButton";
+import { getAccessToken } from "@app/actions/token";
 
 type ResourceTableTypes = {
   events: EventType[];
   resource: ResourceType;
-  user: KindeUser;
+  user: User;
   type: string;
 };
 
@@ -136,23 +136,23 @@ const ResourceTable = ({
               selectedEventsOptions={selectedEventsOptions}
               phaseOptions={phaseOptions}
             />
-            <button
+            <AddButton
+              buttonText="Add Event"
               onClick={() =>
                 createEvent(type, resource, user.id, Number(phaseNumber))
               }
-              className={classnames("button", styles.add_phase_button)}
-            >
-              <PlusIcon />
-            </button>
+              Icon={<PlusIcon />}
+              classNames={classnames("event")}
+            />
           </React.Fragment>
         );
       })}
-      <button
+      <AddButton
+        buttonText="Add Phase"
         onClick={() => createEvent(type, resource, user.id, phases.length + 1)}
-        className={classnames("button", styles.add_phase_btn)}
-      >
-        <PlusIcon />
-      </button>
+        Icon={<PlusIcon />}
+        classNames={classnames("phase")}
+      />
     </div>
   );
 };
@@ -168,6 +168,7 @@ const Phase = ({
   selectedEventsOptions,
   phaseOptions,
 }: PhaseType) => {
+  const path = window.location.pathname;
   const handlePhaseOptionClick = (type: string) => {
     if (type === "duplicate") {
       console.log("duplicate");

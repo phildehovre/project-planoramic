@@ -14,7 +14,7 @@ export async function createTemplate(
     data: {
       name: name || "Untitled",
       description: "",
-      kinde_id: userId,
+      clerk_id: userId,
     },
   });
 
@@ -94,7 +94,7 @@ export const publishTemplate = async (
       data: {
         name: name || "Untitled",
         description: "",
-        kinde_id: userId,
+        clerk_id: userId,
         target_date: ISOTargetDate,
       },
     });

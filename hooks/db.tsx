@@ -27,10 +27,10 @@ export async function createUser(userData: any): Promise<CreateUserResult> {
     // If the user doesn't exist, create a new user
     const createdUser = await prisma.user.create({
       data: {
-        family_name: userData.family_name,
-        given_name: userData.given_name,
-        email: userData.email,
-        kinde_id: userData.id,
+        firstname: userData.firstname,
+        lastname: userData.lastname,
+        email: userData.emailAddress,
+        clerk_id: userData.id,
       },
     });
 

@@ -1,26 +1,34 @@
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import React from "react";
 import { getTemplates } from "@hooks/templates";
 import { getCampaigns } from "@hooks/campaigns";
 import Sidebar from "@components/Sidebar";
 import Spinner from "@components/Spinner";
 import { redirect } from "next/navigation";
+import * as gapi from "googleapis";
+import { auth, clerkClient, currentUser } from "@clerk/nextjs";
 
 const Dashboard = async ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, getUser } = getKindeServerSession();
-  const user = await getUser();
-  const isLoggedIn = await isAuthenticated();
+  const authObject = auth();
+  const user = await currentUser();
+
+  const [OauthAccessToken] = await clerkClient.users.getUserOauthAccessToken(
+    user.id || "",
+    "oauth_google"
+  );
+
+  console.log(OauthAccessToken);
+
   let templates;
   let campaigns;
 
-  if (user !== null) {
+  if (!!user) {
     templates = await getTemplates(user.id);
     campaigns = await getCampaigns(user.id);
   }
 
-  if (!templates) {
-    redirect("/dashboard");
-  }
+  // if (!templates) {
+  //   redirect("/dashboard");
+  // }
 
   const ressourceData: SidebarTypes[] = [
     {
@@ -46,7 +54,7 @@ const Dashboard = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div>
-      {isLoggedIn && (
+      {user && (
         <div className="dashboard_ctn">
           <Sidebar data={ressourceData} />
           <div className="dashboard">
@@ -54,7 +62,7 @@ const Dashboard = async ({ children }: { children: React.ReactNode }) => {
           </div>
         </div>
       )}
-      <Spinner loading={!isAuthenticated} />
+      {/* <Spinner loading={isLoading} /> */}
     </div>
   );
 };

@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import styles from "./ResourceHeader.module.scss";
 import Modal from "@components/Modal";
 import Form from "./Form";
 import { updateTargetDate } from "@app/actions/campaignActions";
@@ -10,9 +9,15 @@ type TargetDateTypes = {
   display: boolean;
   value: string;
   campaignId: string;
+  classNames?: string;
 };
 
-const TargetDate = ({ display, value, campaignId }: TargetDateTypes) => {
+const TargetDate = ({
+  display,
+  value,
+  campaignId,
+  classNames,
+}: TargetDateTypes) => {
   const [displayModal, setDisplayModal] = React.useState(false);
 
   const handleTargetDateChange = async (formData: FormData) => {
@@ -22,10 +27,7 @@ const TargetDate = ({ display, value, campaignId }: TargetDateTypes) => {
   };
   return (
     <>
-      <div
-        className={styles.header_row_right}
-        onClick={() => setDisplayModal(true)}
-      >
+      <div className={classNames} onClick={() => setDisplayModal(true)}>
         {display && <h1>{value}</h1>}
       </div>
       <Form action={handleTargetDateChange}>

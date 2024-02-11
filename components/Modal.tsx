@@ -7,9 +7,17 @@ type ModalProps = {
   submit?: React.ReactElement;
   onCancel: () => void;
   display: boolean;
+  isLoading?: boolean;
 };
 
-const Modal = ({ children, onSave, onCancel, display, submit }: ModalProps) => {
+const Modal = ({
+  children,
+  onSave,
+  onCancel,
+  display,
+  submit,
+  isLoading,
+}: ModalProps) => {
   if (!display) {
     return null;
   }
@@ -23,6 +31,7 @@ const Modal = ({ children, onSave, onCancel, display, submit }: ModalProps) => {
             <button
               className={`${styles.button} ${styles.save_btn}`}
               onClick={onSave}
+              disabled={isLoading}
             >
               Save
             </button>

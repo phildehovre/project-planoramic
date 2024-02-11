@@ -5,6 +5,7 @@ import UpdatableField from "./UpdatableField";
 import styles from "./Cell.module.scss";
 import { CampaignHeaders, TemplateHeaders } from "@lib/TableHeaders";
 import { capitalize } from "@utils/helpers";
+import classnames from "classnames";
 
 type CellType = {
   value: any;
@@ -55,7 +56,7 @@ const Cell = ({ value, type, id, label, isHeader }: CellType) => {
       value={formattedValue}
       resourceType={type}
       resourceId={id}
-      classnames={[styles.cell_ctn, styles[label]]}
+      classNames={classnames(styles.cell_ctn, styles[label])}
       placeholder={label}
       type={inputType}
       isHeader={isHeader}

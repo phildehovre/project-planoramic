@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import UpdatableField from "./UpdatableField";
 import { handleDeleteResource, handlePublishPhase } from "@app/actions/actions";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
@@ -12,9 +12,12 @@ import Modal from "@components/Modal";
 import { redirect } from "next/navigation";
 import { dayjsFormat } from "@utils/helpers";
 import TargetDate from "./TargetDate";
-import { formatAndPostUniqueEvent } from "@app/actions/calendar";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-import { KindeAccessToken } from "@kinde-oss/kinde-auth-nextjs/dist/types";
+import {
+  fetchAccessToken,
+  postManyEventsToGoogle,
+} from "@app/actions/calendar";
+import classNames from "classnames";
+import { useUser } from "@clerk/nextjs";
 
 type ResourceHeaderTypes = {
   resourceId: string;
@@ -31,8 +34,9 @@ const ResourceHeader = ({
 }: ResourceHeaderTypes) => {
   const [displayModal, setDisplayModal] = React.useState("");
 
-  const { getAccessToken } = useKindeBrowserClient();
-  const token = getAccessToken();
+  const { user } = useUser();
+
+  console.log(user);
 
   const campaignOptions = [
     {
@@ -71,7 +75,7 @@ const ResourceHeader = ({
     const name = formData.get("name") as string;
     const targetDate = formData.get("targetDate");
     const res = await publishTemplate(
-      resource.kinde_id,
+      resource.clerk_id,
       name,
       targetDate,
       events as EventType[]
@@ -82,34 +86,38 @@ const ResourceHeader = ({
   };
 
   const handlePublishCampaign = async () => {
-    events &&
-      formatAndPostUniqueEvent(events[0], token as KindeAccessToken).then(
-        (res) => {
-          console.log(res);
-        }
-      );
+    if (!!events && !!user?.id) {
+      postManyEventsToGoogle(events, user?.id).then((res) => {
+        console.log("After posting response: ", res);
+      });
+    }
   };
 
   return (
-    <div>
-      <div style={{ display: "flex", alignItems: "center", gap: "1em" }}>
-        <div className={styles.header_row_left}>
-          <UpdatableField
-            label="name"
-            value={resource?.name as string}
-            resourceType={type}
-            resourceId={resourceId}
-            classnames={["resource_title"]}
-          />
-          <Dropdown
-            options={options}
-            Icon={DotsHorizontalIcon}
-            onOptionClick={handleResourceOptionsClick}
-          />
+    <>
+      <div className={styles.resource_header_ctn}>
+        <div className={styles.header_column}>
+          <span className={styles.row}>
+            <UpdatableField
+              label="name"
+              value={resource?.name as string}
+              resourceType={type}
+              resourceId={resourceId}
+              classNames={classNames(styles.heading)}
+            />
+            <Dropdown
+              options={options}
+              Icon={DotsHorizontalIcon}
+              onOptionClick={handleResourceOptionsClick}
+            />
+          </span>
+        </div>
+        <div className={styles.header_column}>
           <TargetDate
             campaignId={resourceId}
             display={type === "campaign"}
             value={dayjsFormat((resource as CampaignType)?.target_date)}
+            classNames={classNames()}
           />
         </div>
       </div>
@@ -119,7 +127,7 @@ const ResourceHeader = ({
         resourceType={type}
         resourceId={resourceId}
         weight="regular"
-        classnames={["resource_description", "italic"]}
+        classNames={styles.resource_description}
         placeholder={`${type} description`}
       />
       <Form action={handlePublishTemplate}>
@@ -137,7 +145,7 @@ const ResourceHeader = ({
       </Form>
       <Modal
         onCancel={() => setDisplayModal("")}
-        onSave={() => handlePublishCampaign()}
+        onSave={handlePublishCampaign}
         display={displayModal === "publish_campaign"}
       >
         <h1>Publish template as campaign</h1>
@@ -160,7 +168,7 @@ const ResourceHeader = ({
           );
         })}
       </Modal>
-    </div>
+    </>
   );
 };
 
