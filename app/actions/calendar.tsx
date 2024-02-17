@@ -135,7 +135,7 @@ const fetchHolidays = async (region: string, token: any) => {
 export async function postManyEventsToGoogle(
   events: any[],
   // targetDate: Date,
-  userId
+  userId: string
 ) {
   const token = await fetchAccessToken(userId);
   console.log("TOKEN: ", token);

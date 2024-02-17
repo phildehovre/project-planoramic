@@ -66,7 +66,7 @@ const Page = async ({ params }: any) => {
         <ResourceTable
           events={events}
           resource={resource}
-          user={user}
+          user={user as User}
           type={params.resource}
         />
       ) : (

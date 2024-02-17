@@ -2,26 +2,20 @@ import React from "react";
 import { getTemplates } from "@hooks/templates";
 import { getCampaigns } from "@hooks/campaigns";
 import Sidebar from "@components/Sidebar";
-import Spinner from "@components/Spinner";
-import { redirect } from "next/navigation";
-import * as gapi from "googleapis";
 import { auth, clerkClient, currentUser } from "@clerk/nextjs";
 
 const Dashboard = async ({ children }: { children: React.ReactNode }) => {
-  const authObject = auth();
-  const user = await currentUser();
+  const { user } = await auth();
 
-  const [OauthAccessToken] = await clerkClient.users.getUserOauthAccessToken(
-    user.id || "",
-    "oauth_google"
-  );
-
-  console.log(OauthAccessToken);
+  // const [OauthAccessToken] = await clerkClient.users.getUserOauthAccessToken(
+  //   user.id || "",
+  //   "oauth_google"
+  // );
 
   let templates;
   let campaigns;
 
-  if (!!user) {
+  if (user) {
     templates = await getTemplates(user.id);
     campaigns = await getCampaigns(user.id);
   }
